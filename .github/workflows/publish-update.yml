@@ -1,0 +1,39 @@
+name: Publish mobile update
+
+# Pushes new JavaScript to phones that already have the app installed —
+# no rebuild, no reinstall. Requires an EAS build to exist first.
+on:
+  push:
+    branches: [main, claude/kaleida-social-prototype-8sss0v]
+    paths: ['mobile/**', 'src/lib/**']
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - run: npm ci
+      - run: npm run sync
+      - run: npx tsc --noEmit
+
+      - name: Publish
+        env:
+          EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+          EXPO_OWNER: ${{ secrets.EXPO_OWNER }}
+        run: eas update --branch preview --message "${{ github.event.head_commit.message || 'manual update' }}" --non-interactive

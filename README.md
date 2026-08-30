@@ -40,17 +40,11 @@ npm run preview  # serve the production build
 
 Requires Node 18+.
 
-## Deploying to Vercel
+## Deploying
 
-The repo is Vercel-ready — `vercel.json` already rewrites all routes to `index.html` for the
-client-side router.
-
-- **Framework preset:** Vite
-- **Build command:** `npm run build`
-- **Output directory:** `dist`
-
-Import the repository at [vercel.com/new](https://vercel.com/new) and accept the defaults, or
-run `npx vercel --prod` from a machine that is logged in.
+See **[DEPLOY.md](./DEPLOY.md)** — how to get the web app on Vercel and a real `.apk` onto
+an Android phone, both driven from GitHub Actions so no token is ever pasted anywhere but
+GitHub's own settings page.
 
 ---
 
