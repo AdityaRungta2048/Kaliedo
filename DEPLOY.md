@@ -104,18 +104,6 @@ If you'd rather it deploy by itself on each push, import the repo at
 
 ---
 
-## The GitHub workflows
-
-`.github/workflows/` still holds three workflows, but they are now **manual only** — none
-of them run on push, so nothing fires at you unexpectedly. They're there if you ever want
-the deploy gated behind CI; otherwise ignore them, or delete the folder.
-
-Running one requires the matching secrets under **Settings → Secrets and variables →
-Actions**: `EXPO_TOKEN`, `EAS_PROJECT_ID`, `EXPO_OWNER` for the mobile ones, and
-`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` for the web one.
-
----
-
 ## Troubleshooting
 
 **`The engine "node" is incompatible` / eas-cli won't install** — you're on Node 20 or

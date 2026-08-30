@@ -43,8 +43,8 @@ Requires Node 18+.
 ## Deploying
 
 See **[DEPLOY.md](./DEPLOY.md)** — how to get the web app on Vercel and a real `.apk` onto
-an Android phone, both driven from GitHub Actions so no token is ever pasted anywhere but
-GitHub's own settings page.
+an Android phone. Both run from your own machine: Expo builds the app in its cloud, and
+Vercel deploys the site, with no CI in between.
 
 ---
 
