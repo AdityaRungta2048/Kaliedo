@@ -1,13 +1,15 @@
 import { useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Check, FileText, ImagePlus, Plus, Sparkles, Trash2, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, FileText, ImagePlus, Plus, Sparkles, Trash2, VenetianMask, X } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { LEXICON, ONBOARDING_TOPICS, tintFor } from '@/lib/topics'
 import type { Art, ArtMotif, Post, PostKind } from '@/lib/types'
 import { cx, readTime } from '@/lib/utils'
 import { CoverArt } from '@/components/brand/CoverArt'
-import { Avatar, Button, Pressable, TopicChip } from '@/components/ui/Primitives'
+import { Avatar, Button, Pressable, Switch, TopicChip } from '@/components/ui/Primitives'
+import { AvatarArt } from '@/components/brand/CoverArt'
+import { ANON_USER } from '@/lib/identity'
 
 const KINDS: { id: PostKind; label: string; blurb: string }[] = [
   { id: 'essay', label: 'Essay', blurb: 'Something with a beginning and an end' },
@@ -42,6 +44,7 @@ export function Create() {
   const [art, setArt] = useState<Art | null>(null)
   const [photo, setPhoto] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
+  const [anonymous, setAnonymous] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const paragraphs = useMemo(() => bodyText.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean), [bodyText])
@@ -64,10 +67,11 @@ export function Create() {
       art: photo ? undefined : art ?? undefined,
       photo: photo ?? undefined,
       concepts: suggestTopics(bodyText),
+      anonymous: anonymous || undefined,
     }
     window.setTimeout(() => {
       dispatch({ type: 'addPost', post })
-      toast('Published to your feed', 'check')
+      toast(anonymous ? 'Published anonymously' : 'Published to your feed', 'check')
       navigate('/')
     }, 700)
   }
@@ -245,10 +249,40 @@ export function Create() {
             <div className="space-y-4">
               <h2 className="font-display text-[22px] font-semibold tracking-[-0.02em] text-ink">How it will look</h2>
 
+              <div className="rounded-2xl border border-line bg-canvas">
+                <div className="flex items-start gap-3 p-4">
+                  <VenetianMask size={17} className="mt-0.5 shrink-0 text-muted" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-3">
+                      <p className="flex-1 text-[14px] font-medium text-ink">Publish anonymously</p>
+                      <Switch checked={anonymous} onChange={setAnonymous} label="Publish anonymously" />
+                    </div>
+                    <p className="mt-1 text-[12.5px] leading-relaxed text-muted">
+                      {anonymous
+                        ? 'Your name will not appear anywhere on this piece. It still earns reach, replies and saves. You can put your name on it later — but a signed post can never be made anonymous.'
+                        : 'Your name will appear on this piece. Turn this on before publishing if you would rather it stood on its own.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <article className="rounded-2xl border border-line bg-surface p-5">
                 <div className="flex items-center gap-2.5">
-                  <Avatar user={me} size={30} link={false} />
-                  <span className="text-[13.5px] font-semibold text-ink">{me.name}</span>
+                  {anonymous ? (
+                    <>
+                      <span className="h-[30px] w-[30px] overflow-hidden rounded-full">
+                        <AvatarArt seed={ANON_USER.avatar.seed} palette={ANON_USER.avatar.palette} />
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[13.5px] font-semibold text-ink">
+                        <VenetianMask size={13} className="text-muted" /> Anonymous
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Avatar user={me} size={30} link={false} />
+                      <span className="text-[13.5px] font-semibold text-ink">{me.name}</span>
+                    </>
+                  )}
                   <span className="text-[12.5px] text-faint">· now</span>
                 </div>
                 <h3 className="mt-3 font-display text-[21px] font-semibold leading-tight tracking-[-0.02em] text-ink">{title || 'Untitled'}</h3>
@@ -284,7 +318,7 @@ export function Create() {
           ) : (
             <Button variant="accent" size="lg" onClick={publish} disabled={publishing}>
               {publishing ? <motion.span animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}><Sparkles size={15} /></motion.span> : <Check size={15} />}
-              {publishing ? 'Publishing…' : 'Publish'}
+              {publishing ? 'Publishing…' : anonymous ? 'Publish anonymously' : 'Publish'}
             </Button>
           )}
         </div>

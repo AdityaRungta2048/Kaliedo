@@ -452,3 +452,45 @@ POSTS.push(
     comments: [],
   },
 )
+
+POSTS.push(
+  {
+    id: 'p33', authorId: 'u_jonas', kind: 'essay', minutesAgo: 52, anonymous: true,
+    title: 'I have been ghostwriting for someone you follow',
+    body: [
+      'Four years, three accounts, none of them mine. The words are mine. The audience is theirs. I agreed to it and I would agree again, and I still open the app some mornings and feel something I do not have a clean name for.',
+      'The strange part is not the invisibility. It is how quickly the invisibility stops mattering. You learn the voice, you write inside it, and after a while the sentences arrive already wearing someone else’s clothes.',
+      'I am writing this without a name because it is the only honest way to say it, and because I wanted to know whether the writing carries on its own.',
+    ],
+    topics: ['Writing', 'Craft', 'Psychology'], likes: 12840, reposts: 3120,
+    concepts: ['ghostwriting', 'anonymity', 'voice', 'identity'],
+    comments: [
+      { id: 'c30', authorId: 'u_alex', text: 'It carries. Whoever you are, it carries.', minutesAgo: 30, likes: 1840 },
+      { id: 'c31', authorId: 'u_noor', text: 'The last line is the whole piece. I hope you claim this one day.', minutesAgo: 18, likes: 902 },
+    ],
+  },
+  {
+    id: 'p34', authorId: 'u_priya', kind: 'note', minutesAgo: 210, anonymous: true,
+    title: 'Nobody in this industry can afford the clothes they sell',
+    body: [
+      'I have stood in three showrooms this season pricing coats at more than my rent, styled by people on assistant wages, photographed by someone who drove four hours because the day rate did not cover a hotel.',
+      'None of that is a scandal. It is just the arithmetic, and the arithmetic is never in the caption.',
+    ],
+    topics: ['Fashion', 'Culture'], likes: 6420, reposts: 1490,
+    concepts: ['industry', 'money', 'wages', 'fashion'],
+    comments: [],
+  },
+  {
+    id: 'p35', authorId: 'u_me', kind: 'note', minutesAgo: 96, anonymous: true,
+    title: 'The draft I could not publish under my own name',
+    body: [
+      'It is not scandalous. It is just closer to the bone than the things I usually put my name on, and I wanted to find out whether that was the writing or the fear talking.',
+      'So: no name. If it lands, I will know it was the writing.',
+    ],
+    topics: ['Writing', 'Psychology'], likes: 2610, reposts: 480,
+    concepts: ['fear', 'anonymity', 'draft', 'honesty'],
+    comments: [
+      { id: 'c32', authorId: 'u_greta', text: 'It landed. Whoever wrote this, it landed.', minutesAgo: 40, likes: 310 },
+    ],
+  },
+)

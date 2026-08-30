@@ -38,6 +38,8 @@ export type FeedInput = {
   socialFollowing: number
   seed: number
   mutedTopics?: Set<Topic>
+  /** When focused mode is on, nothing outside this topic reaches the feed. */
+  focusNiche?: Topic | null
 }
 
 export type FeedItem = { post: Post; relevance: Relevance; fromFollowing: boolean }
@@ -49,13 +51,24 @@ export type FeedItem = { post: Post; relevance: Relevance; fromFollowing: boolea
 export function buildFeed(input: FeedInput): FeedItem[] {
   const { posts, interests, following, mode, mix, socialFollowing, seed, mutedTopics } = input
 
-  const eligible = posts.filter((p) => !p.topics.some((t) => mutedTopics?.has(t)))
+  const { focusNiche } = input
+
+  let eligible = posts.filter((p) => !p.topics.some((t) => mutedTopics?.has(t)))
+
+  // Focused mode is a hard filter, not a weighting — that is the whole promise.
+  if (focusNiche) eligible = eligible.filter((p) => p.topics.includes(focusNiche))
 
   const tagged: FeedItem[] = eligible.map((p) => ({
     post: p,
     relevance: relevanceOf(p, interests),
     fromFollowing: following.has(p.authorId),
   }))
+
+  if (focusNiche) {
+    // Inside a niche there is no familiar/related/explore split to make; order
+    // is all that is left to decide.
+    return seededOrder(tagged, seed)
+  }
 
   if (mode === 'following') {
     return seededOrder(tagged.filter((i) => i.fromFollowing), seed)

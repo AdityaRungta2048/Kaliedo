@@ -1,9 +1,9 @@
 import { memo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { EllipsisVertical, ImageIcon, Sparkles } from 'lucide-react'
+import { EllipsisVertical, ImageIcon, Sparkles, VenetianMask } from 'lucide-react'
 import type { Post, Relevance } from '@/lib/types'
-import { userById } from '@/lib/users'
+import { displayAuthor, isAnonymous } from '@/lib/identity'
 import { RELEVANCE_COPY } from '@/lib/recommend'
 import { compact, cx, excerpt, readTime, timeAgo } from '@/lib/utils'
 import { Avatar, Pressable, TopicChip, VerifiedMark } from '@/components/ui/Primitives'
@@ -31,7 +31,8 @@ function PostBlockBase({
   onOpen: () => void
   index?: number
 }) {
-  const author = userById(post.authorId)
+  const anon = isAnonymous(post)
+  const author = displayAuthor(post)
   const [menuOpen, setMenuOpen] = useState(false)
   const mins = readTime(post.body)
 
@@ -62,15 +63,22 @@ function PostBlockBase({
 
       <div className="p-4 sm:p-[18px]">
         <header className="flex items-center gap-2.5 pr-5">
-          <Avatar user={author} size={30} />
+          <Avatar user={author} size={30} link={!anon} />
           <div className="flex min-w-0 flex-1 items-center gap-1.5">
-            <Link
-              to={`/u/${author.handle}`} onClick={(e) => e.stopPropagation()}
-              className="truncate text-[13.5px] font-semibold text-ink hover:underline"
-            >
-              {author.name}
-            </Link>
-            {author.verified && <VerifiedMark />}
+            {anon ? (
+              <span className="flex items-center gap-1.5 truncate text-[13.5px] font-semibold text-ink">
+                <VenetianMask size={13} className="shrink-0 text-muted" />
+                Anonymous
+              </span>
+            ) : (
+              <Link
+                to={`/u/${author.handle}`} onClick={(e) => e.stopPropagation()}
+                className="truncate text-[13.5px] font-semibold text-ink hover:underline"
+              >
+                {author.name}
+              </Link>
+            )}
+            {!anon && author.verified && <VerifiedMark />}
             <span className="shrink-0 whitespace-nowrap text-[12.5px] text-faint">· {timeAgo(post.minutesAgo)}</span>
           </div>
           <Pressable

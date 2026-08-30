@@ -9,6 +9,7 @@ import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { USERS } from '@/lib/shared/users'
 import { compact } from '@/lib/shared/utils'
+import { isAnonymous } from '@/lib/shared/identity'
 import { RADIUS } from '@/theme/tokens'
 import { PostBlock } from '@/components/PostBlock'
 import { FollowButton } from '@/components/PostActions'
@@ -40,7 +41,9 @@ export function ProfileScreen({ handle, self }: { handle?: string; self?: boolea
   }
 
   const isMe = user.id === me.id
-  const posts = state.posts.filter((p) => p.authorId === user.id)
+  // Anonymous pieces stay off the public profile; on your own they stay visible
+  // so you can find and claim them.
+  const posts = state.posts.filter((p) => p.authorId === user.id && (isMe || !isAnonymous(p)))
   const saved = state.posts.filter((p) => state.saves.includes(p.id))
   const shown = tab === 'saved' ? saved : posts
 
@@ -91,7 +94,7 @@ export function ProfileScreen({ handle, self }: { handle?: string; self?: boolea
 
           <View style={{ flexDirection: 'row', gap: 24, marginTop: 16 }}>
             {[
-              { label: 'Pieces', value: posts.length },
+              { label: 'Pieces', value: posts.filter((p) => !isAnonymous(p)).length },
               { label: 'Readers', value: user.followers + (state.following.includes(user.id) && !isMe ? 1 : 0) },
               { label: 'Reading', value: isMe ? state.following.length : user.following },
             ].map((s) => (

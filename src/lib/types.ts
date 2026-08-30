@@ -40,6 +40,7 @@ export type PostKind = 'essay' | 'note' | 'field-note'
 
 export type Post = {
   id: string
+  /** Always the real author. Hidden from the interface while `anonymous` is set. */
   authorId: string
   kind: PostKind
   title: string
@@ -55,7 +56,27 @@ export type Post = {
   comments: Comment[]
   /** Extra retrieval terms for the mock semantic search. */
   concepts?: string[]
+  /** Published without a name. One-way: a signed post can never become anonymous. */
+  anonymous?: boolean
+  /** Set when the author claimed an anonymous post. Claiming is permanent. */
+  revealedAt?: number
 }
+
+/**
+ * A second, single-subject identity. One per account, locked to one niche —
+ * the point is the constraint, so changing it is deliberately expensive.
+ */
+export type AlterEgo = {
+  handle: string
+  name: string
+  niche: Topic
+  createdAt: number
+  /** null until the first change, which is free. Every later change waits out the cooldown. */
+  nicheChangedAt: number | null
+  avatarSeed: number
+}
+
+export type Identity = 'main' | 'alter'
 
 export type Relevance = 'familiar' | 'related' | 'explore'
 

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
-import type { AppNotification, Comment, Conversation, FeedMode, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/types'
+import type { AlterEgo, AppNotification, Comment, Conversation, FeedMode, Identity, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/types'
+import { nicheChangeState, suggestAlterEgoHandle } from '@/lib/identity'
 import { POSTS } from '@/lib/posts'
 import { USERS, ME_ID, userById } from '@/lib/users'
 import { CONVERSATIONS, NOTIFICATIONS } from '@/lib/social'
@@ -23,6 +24,9 @@ type Persisted = {
   messagePermission: 'everyone' | 'following' | 'nobody'
   displayName: string
   bio: string
+  /** One per account, or none. */
+  alterEgo: AlterEgo | null
+  activeIdentity: Identity
 }
 
 const DEFAULTS: Persisted = {
@@ -42,6 +46,8 @@ const DEFAULTS: Persisted = {
   messagePermission: 'following',
   displayName: 'You',
   bio: 'Writing in public, badly, on purpose. Notes on craft and attention.',
+  alterEgo: null,
+  activeIdentity: 'main',
 }
 
 function load(): Persisted {
@@ -81,6 +87,11 @@ type Action =
   | { type: 'startConversation'; userId: string }
   | { type: 'readConversation'; conversationId: string }
   | { type: 'readNotifications' }
+  | { type: 'createAlterEgo'; ego: AlterEgo }
+  | { type: 'changeNiche'; niche: Topic }
+  | { type: 'setIdentity'; identity: Identity }
+  | { type: 'discardAlterEgo' }
+  | { type: 'revealPost'; postId: string }
   | { type: 'reset' }
 
 function toggle(list: string[], id: string): string[] {
@@ -137,6 +148,39 @@ function reducer(state: State, action: Action): State {
       }
     case 'readNotifications':
       return { ...state, notifications: state.notifications.map((n) => ({ ...n, unread: false })) }
+    case 'createAlterEgo':
+      return { ...state, alterEgo: action.ego, activeIdentity: 'alter' }
+    case 'changeNiche': {
+      // The cooldown is enforced here, not only in the interface, so no button
+      // or stale render can slip a change through early.
+      if (!state.alterEgo) return state
+      if (state.alterEgo.niche === action.niche) return state
+      if (!nicheChangeState(state.alterEgo).allowed) return state
+      // The identity is named after its subject, so both follow the niche.
+      return {
+        ...state,
+        alterEgo: {
+          ...state.alterEgo,
+          niche: action.niche,
+          name: `${action.niche} only`,
+          handle: suggestAlterEgoHandle(action.niche),
+          nicheChangedAt: Date.now(),
+        },
+      }
+    }
+    case 'setIdentity':
+      return { ...state, activeIdentity: action.identity === 'alter' && !state.alterEgo ? 'main' : action.identity }
+    case 'discardAlterEgo':
+      return { ...state, alterEgo: null, activeIdentity: 'main' }
+    case 'revealPost':
+      // One direction only. Nothing in the app can set `anonymous` back to true.
+      return {
+        ...state,
+        posts: state.posts.map((p) =>
+          p.id === action.postId && p.anonymous && p.authorId === ME_ID
+            ? { ...p, anonymous: false, revealedAt: Date.now() }
+            : p),
+      }
     case 'reset':
       return { ...state, ...DEFAULTS, posts: POSTS, conversations: CONVERSATIONS, notifications: NOTIFICATIONS, feedSeed: 1 }
     default: return state

@@ -1,6 +1,6 @@
 import { BellOff, Bookmark, EyeOff, Flag, Link2, UserMinus, UserPlus } from 'lucide-react'
 import type { Post } from '@/lib/types'
-import { userById } from '@/lib/users'
+import { displayAuthor, isAnonymous } from '@/lib/identity'
 import { useApp } from '@/store/AppContext'
 import { Sheet } from '@/components/ui/Overlay'
 import { Pressable } from '@/components/ui/Primitives'
@@ -8,8 +8,9 @@ import { Pressable } from '@/components/ui/Primitives'
 /** Every "…" in the product opens this. No dead affordances. */
 export function PostMenu({ post, open, onClose }: { post: Post; open: boolean; onClose: () => void }) {
   const { state, dispatch, toast } = useApp()
-  const author = userById(post.authorId)
-  const following = state.following.includes(author.id)
+  const anon = isAnonymous(post)
+  const author = displayAuthor(post)
+  const following = state.following.includes(post.authorId)
   const saved = state.saves.includes(post.id)
   const topic = post.topics[0]
 
@@ -22,10 +23,12 @@ export function PostMenu({ post, open, onClose }: { post: Post; open: boolean; o
       icon: Link2, label: 'Copy link',
       run: () => { navigator.clipboard?.writeText(`https://kaleido.app/p/${post.id}`).catch(() => {}); toast('Link copied') },
     },
-    {
+    // No follow row on an anonymous post: there is no one to follow, and naming
+    // the account here would undo the whole point.
+    ...(anon ? [] : [{
       icon: following ? UserMinus : UserPlus, label: following ? `Unfollow ${author.name}` : `Follow ${author.name}`,
       run: () => { dispatch({ type: 'toggleFollow', id: author.id }); toast(following ? `Unfollowed ${author.name}` : `Following ${author.name}`) },
-    },
+    }]),
     {
       icon: EyeOff, label: 'Not interested',
       run: () => toast('Noted — you will see less like this'),

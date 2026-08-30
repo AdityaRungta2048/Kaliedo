@@ -3,7 +3,7 @@ import { FlatList, RefreshControl, ScrollView, StyleSheet, View } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { useRouter } from 'expo-router'
-import { Inbox, Mail, Search, SlidersHorizontal } from 'lucide-react-native'
+import { Crosshair, Inbox, Mail, Search, SlidersHorizontal, X } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { buildFeed, type FeedItem } from '@/lib/shared/recommend'
@@ -12,6 +12,7 @@ import { RADIUS } from '@/theme/tokens'
 import { PostBlock, PostBlockSkeletonList } from '@/components/PostBlock'
 import { MixBar, MixControls } from '@/components/MixControls'
 import { Sheet } from '@/components/Sheets'
+import { FocusSheet } from '@/components/FocusSheet'
 import { Button, EmptyState, Tap, Txt } from '@/components/UI'
 import { LogoMark } from '@/components/Art'
 
@@ -29,11 +30,14 @@ export default function Home() {
   const router = useRouter()
   const listRef = useRef<FlatList<FeedItem>>(null)
   const [mixOpen, setMixOpen] = useState(false)
+  const [focusOpen, setFocusOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const first = useRef(true)
 
   const unreadMsgs = state.conversations.filter((cv) => cv.messages.some((m) => m.from === 'them' && !m.read)).length
+
+  const focused = state.activeIdentity === 'alter' && state.alterEgo !== null
 
   const feed = useMemo(
     () => buildFeed({
@@ -45,8 +49,9 @@ export default function Home() {
       socialFollowing: state.socialFollowing,
       seed: state.feedSeed,
       mutedTopics: new Set(state.mutedTopics),
+      focusNiche: focused ? state.alterEgo!.niche : null,
     }),
-    [state.posts, state.interests, state.following, state.feedMode, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics],
+    [state.posts, state.interests, state.following, state.feedMode, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics, focused, state.alterEgo],
   )
 
   useEffect(() => {
@@ -71,6 +76,9 @@ export default function Home() {
       }}>
         <LogoMark size={26} colors={{ ink: c.ink }} />
         <Txt family="display" size={19} style={{ flex: 1, letterSpacing: -0.3 }}>Kaleido</Txt>
+        <Tap onPress={() => setFocusOpen(true)} accessibilityLabel="Focused mode" style={{ padding: 8 }}>
+          <Crosshair size={20} color={focused ? c.iris : c.muted} />
+        </Tap>
         <Tap onPress={() => router.push('/discover')} accessibilityLabel="Search" style={{ padding: 8 }}>
           <Search size={20} color={c.muted} />
         </Tap>
@@ -87,6 +95,24 @@ export default function Home() {
         </Tap>
       </View>
 
+      {focused ? (
+        <View style={{
+          marginHorizontal: 16, marginBottom: 10, paddingHorizontal: 13, paddingVertical: 10,
+          borderRadius: 999, flexDirection: 'row', alignItems: 'center', gap: 9,
+          backgroundColor: c.iris + '14', borderWidth: 1, borderColor: c.iris + '4D',
+        }}>
+          <Crosshair size={14} color={c.iris} />
+          <Txt size={13} weight="medium" numberOfLines={1} style={{ flex: 1 }}>
+            Focused · {state.alterEgo!.niche} only
+          </Txt>
+          <Tap
+            onPress={() => { dispatch({ type: 'setIdentity', identity: 'main' }); toast('Back to your main feed') }}
+            accessibilityLabel="Leave focused mode" style={{ padding: 2 }}
+          >
+            <X size={15} color={c.muted} />
+          </Tap>
+        </View>
+      ) : (
       <View style={{ paddingLeft: 12, paddingRight: 12, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         {/* Four modes do not fit beside the mix pill on a small phone, so they scroll. */}
         <ScrollView
@@ -121,6 +147,7 @@ export default function Home() {
           <View style={{ width: 26 }}><MixBar mix={state.mix} height={5} /></View>
         </Tap>
       </View>
+      )}
 
       {loading ? (
         <Animated.View exiting={FadeOut.duration(160)} style={{ paddingHorizontal: 16 }}>
@@ -142,20 +169,24 @@ export default function Home() {
             windowSize={9}
             removeClippedSubviews
             ListHeaderComponent={
-              activeMode ? (
-                <Txt size={12} color={c.faint} style={{ marginBottom: 12 }}>
-                  {activeMode.blurb} · {feed.length} pieces
-                </Txt>
-              ) : null
+              <Txt size={12} color={c.faint} style={{ marginBottom: 12 }}>
+                {focused
+                  ? `Nothing outside ${state.alterEgo!.niche} reaches this feed · ${feed.length} pieces`
+                  : `${activeMode?.blurb ?? ''} · ${feed.length} pieces`}
+              </Txt>
             }
             ListEmptyComponent={
               <EmptyState
                 icon={<Inbox size={22} color={c.faint} />}
                 title="Nothing here yet"
-                body={state.feedMode === 'following'
-                  ? 'Nobody you follow published today. Explore is a good place to fix that.'
-                  : 'Widen your mix or add an interest and this will fill up.'}
-                action={<Button label="Open Explore" onPress={() => changeMode('explore')} />}
+                body={focused
+                  ? `Nobody has published in ${state.alterEgo!.niche} yet. Focused mode shows this niche and nothing else.`
+                  : state.feedMode === 'following'
+                    ? 'Nobody you follow published today. Explore is a good place to fix that.'
+                    : 'Widen your mix or add an interest and this will fill up.'}
+                action={focused
+                  ? <Button label="Leave focused mode" onPress={() => dispatch({ type: 'setIdentity', identity: 'main' })} />
+                  : <Button label="Open Explore" onPress={() => changeMode('explore')} />}
               />
             }
             refreshControl={
@@ -175,6 +206,8 @@ export default function Home() {
           />
         </Animated.View>
       )}
+
+      <FocusSheet open={focusOpen} onClose={() => setFocusOpen(false)} />
 
       <Sheet open={mixOpen} onClose={() => setMixOpen(false)} title="Your Kaleido mix">
         <View style={{ paddingHorizontal: 18, paddingTop: 4, paddingBottom: 20 }}>

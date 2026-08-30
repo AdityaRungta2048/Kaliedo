@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
-  AtSign, Ban, Bell, EyeOff, Lock, LogOut, Mail, Palette, ShieldCheck, SlidersHorizontal, Tags, User,
+  AtSign, Ban, Bell, Crosshair, EyeOff, Lock, LogOut, Mail, Palette, ShieldCheck, SlidersHorizontal, Tags, User,
 } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { ONBOARDING_TOPICS } from '@/lib/topics'
@@ -11,6 +11,8 @@ import { MixControls } from '@/components/feed/MixControls'
 import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
 import { Button, Pressable, Switch, TopicChip } from '@/components/ui/Primitives'
 import { Sheet } from '@/components/ui/Overlay'
+import { FocusSheet } from '@/components/layout/FocusMode'
+import { formatCooldown, nicheChangeState } from '@/lib/identity'
 
 function Section({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
   return (
@@ -56,6 +58,7 @@ export function Settings() {
   const navigate = useNavigate()
   const [blocked, setBlocked] = useState(false)
   const [notInterested, setNotInterested] = useState(false)
+  const [focusOpen, setFocusOpen] = useState(false)
 
   return (
     <div className="mx-auto w-full max-w-[720px] space-y-4 px-4 pb-16 pt-5 sm:px-6 lg:pt-9">
@@ -106,6 +109,29 @@ export function Settings() {
           control={<Switch label="Sensitive content" checked={state.sensitiveFilter} onChange={(v) => dispatch({ type: 'patch', patch: { sensitiveFilter: v } })} />} />
       </Section>
 
+      <Section title="Focused mode" icon={<Crosshair size={15} />}>
+        <Row
+          label={state.alterEgo ? state.alterEgo.name : 'Create a focused identity'}
+          hint={state.alterEgo
+            ? `Reading only ${state.alterEgo.niche} · ${formatCooldown(nicheChangeState(state.alterEgo))}`
+            : 'One alter ego, one subject. Its feed carries that niche and nothing else.'}
+          onClick={() => setFocusOpen(true)}
+          control={<Crosshair size={16} className="text-faint" />}
+        />
+        {state.alterEgo && (
+          <Row
+            label="Read as this identity"
+            hint="Switches your feed to the niche only."
+            control={
+              <Switch
+                label="Focused mode" checked={state.activeIdentity === 'alter'}
+                onChange={(v) => { dispatch({ type: 'setIdentity', identity: v ? 'alter' : 'main' }); toast(v ? `Reading as ${state.alterEgo!.name}` : 'Back to your main feed') }}
+              />
+            }
+          />
+        )}
+      </Section>
+
       <Section title="Recommendations" icon={<SlidersHorizontal size={15} />}>
         <div className="px-5 py-5"><MixControls compactHeader /></div>
       </Section>
@@ -137,6 +163,8 @@ export function Settings() {
       </Section>
 
       <p className="pt-2 text-center text-[12px] text-faint">Kaleido · visual prototype · all data is local to this browser</p>
+
+      <FocusSheet open={focusOpen} onClose={() => setFocusOpen(false)} />
 
       <Sheet open={blocked} onClose={() => setBlocked(false)} title="Blocked accounts" size="sm">
         <div className="px-5 pb-8 pt-2 text-center text-[14px] text-muted">

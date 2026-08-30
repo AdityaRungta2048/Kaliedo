@@ -6,6 +6,7 @@ import { useViewer } from '@/store/ViewerContext'
 import { BottomNav, Sidebar } from './Navigation'
 import { TopBar } from './TopBar'
 import { DemoMode } from './DemoMode'
+import { FocusSheet } from './FocusMode'
 import { Toaster } from '@/components/ui/Toaster'
 import { PostReaderLayer } from '@/components/post/PostReader'
 
@@ -14,6 +15,7 @@ export function AppShell() {
   const { setDemoOpen, reducedMotion } = useApp()
   const { openId, open, close } = useViewer()
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('kaleido.sidebar') === 'collapsed')
+  const [focusOpen, setFocusOpen] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('kaleido.sidebar', collapsed ? 'collapsed' : 'expanded')
@@ -32,10 +34,10 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-dvh bg-canvas">
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
+      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} onOpenFocus={() => setFocusOpen(true)} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar />
+        <TopBar onOpenFocus={() => setFocusOpen(true)} />
         <main className="min-w-0 flex-1 pb-[70px] lg:pb-0">
           {/*
             Keyed on the path so each route mounts fresh and plays its entrance.
@@ -58,6 +60,7 @@ export function AppShell() {
 
       <BottomNav />
       <DemoMode />
+      <FocusSheet open={focusOpen} onClose={() => setFocusOpen(false)} />
       <Toaster />
       <PostReaderLayer postId={openId} onClose={close} onOpenPost={(id) => { close(); window.setTimeout(() => open(id), 220) }} />
     </div>

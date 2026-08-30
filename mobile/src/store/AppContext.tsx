@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer,
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Haptics from 'expo-haptics'
 import { Platform } from 'react-native'
-import type { AppNotification, Comment, Conversation, FeedMode, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/shared/types'
+import type { AlterEgo, AppNotification, Comment, Conversation, FeedMode, Identity, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/shared/types'
+import { nicheChangeState, suggestAlterEgoHandle } from '@/lib/shared/identity'
 import { POSTS } from '@/lib/shared/posts'
 import { CONVERSATIONS, NOTIFICATIONS } from '@/lib/shared/social'
 import { USERS, userById } from '@/lib/shared/users'
@@ -28,6 +29,8 @@ type Persisted = {
   messagePermission: 'everyone' | 'following' | 'nobody'
   displayName: string
   bio: string
+  alterEgo: AlterEgo | null
+  activeIdentity: Identity
 }
 
 const DEFAULTS: Persisted = {
@@ -48,6 +51,8 @@ const DEFAULTS: Persisted = {
   messagePermission: 'following',
   displayName: 'You',
   bio: 'Writing in public, badly, on purpose. Notes on craft and attention.',
+  alterEgo: null,
+  activeIdentity: 'main',
 }
 
 type State = Persisted & {
@@ -77,6 +82,11 @@ type Action =
   | { type: 'startConversation'; userId: string }
   | { type: 'readConversation'; conversationId: string }
   | { type: 'readNotifications' }
+  | { type: 'createAlterEgo'; ego: AlterEgo }
+  | { type: 'changeNiche'; niche: Topic }
+  | { type: 'setIdentity'; identity: Identity }
+  | { type: 'discardAlterEgo' }
+  | { type: 'revealPost'; postId: string }
   | { type: 'reset' }
 
 const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id])
@@ -125,6 +135,37 @@ function reducer(state: State, action: Action): State {
       }
     case 'readNotifications':
       return { ...state, notifications: state.notifications.map((n) => ({ ...n, unread: false })) }
+    case 'createAlterEgo':
+      return { ...state, alterEgo: action.ego, activeIdentity: 'alter' }
+    case 'changeNiche': {
+      // Cooldown enforced in the reducer, not only in the interface.
+      if (!state.alterEgo) return state
+      if (state.alterEgo.niche === action.niche) return state
+      if (!nicheChangeState(state.alterEgo).allowed) return state
+      return {
+        ...state,
+        alterEgo: {
+          ...state.alterEgo,
+          niche: action.niche,
+          name: `${action.niche} only`,
+          handle: suggestAlterEgoHandle(action.niche),
+          nicheChangedAt: Date.now(),
+        },
+      }
+    }
+    case 'setIdentity':
+      return { ...state, activeIdentity: action.identity === 'alter' && !state.alterEgo ? 'main' : action.identity }
+    case 'discardAlterEgo':
+      return { ...state, alterEgo: null, activeIdentity: 'main' }
+    case 'revealPost':
+      // One direction only.
+      return {
+        ...state,
+        posts: state.posts.map((p) =>
+          p.id === action.postId && p.anonymous && p.authorId === ME_ID
+            ? { ...p, anonymous: false, revealedAt: Date.now() }
+            : p),
+      }
     case 'reset':
       return { ...state, ...DEFAULTS, onboarded: true, posts: POSTS, conversations: CONVERSATIONS, notifications: NOTIFICATIONS, feedSeed: 1 }
     default: return state

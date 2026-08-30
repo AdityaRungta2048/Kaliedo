@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import {
-  ArrowLeft, Ban, Bell, EyeOff, Lock, LogOut, Monitor, Moon, Palette,
+  ArrowLeft, Ban, Bell, Crosshair, EyeOff, Lock, LogOut, Monitor, Moon, Palette,
   ShieldCheck, SlidersHorizontal, Sun, Tags, User, Vibrate,
 } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
@@ -13,6 +13,8 @@ import type { ThemeChoice } from '@/lib/shared/types'
 import { RADIUS } from '@/theme/tokens'
 import { MixControls } from '@/components/MixControls'
 import { Sheet } from '@/components/Sheets'
+import { FocusSheet } from '@/components/FocusSheet'
+import { formatCooldown, nicheChangeState } from '@/lib/shared/identity'
 import { Button, Chip, Divider, Switch, Tap, Txt } from '@/components/UI'
 
 function Section({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
@@ -79,6 +81,7 @@ export default function Settings() {
   const router = useRouter()
   const [blocked, setBlocked] = useState(false)
   const [notInterested, setNotInterested] = useState(false)
+  const [focusOpen, setFocusOpen] = useState(false)
 
   return (
     <View style={{ flex: 1, backgroundColor: c.canvas, paddingTop: insets.top }}>
@@ -132,6 +135,28 @@ export default function Settings() {
             control={<Switch value={state.sensitiveFilter} onChange={(v) => dispatch({ type: 'patch', patch: { sensitiveFilter: v } })} />} />
         </Section>
 
+        <Section title="Focused mode" icon={<Crosshair size={15} color={c.muted} />}>
+          <Row
+            label={state.alterEgo ? state.alterEgo.name : 'Create a focused identity'}
+            hint={state.alterEgo
+              ? `Reading only ${state.alterEgo.niche} · ${formatCooldown(nicheChangeState(state.alterEgo))}`
+              : 'One alter ego, one subject. Its feed carries that niche and nothing else.'}
+            onPress={() => setFocusOpen(true)}
+            control={<Crosshair size={16} color={c.faint} />}
+          />
+          {state.alterEgo && (
+            <Row
+              label="Read as this identity" hint="Switches your feed to the niche only."
+              control={
+                <Switch
+                  value={state.activeIdentity === 'alter'}
+                  onChange={(v) => { dispatch({ type: 'setIdentity', identity: v ? 'alter' : 'main' }); toast(v ? `Reading as ${state.alterEgo!.name}` : 'Back to your main feed') }}
+                />
+              }
+            />
+          )}
+        </Section>
+
         <Section title="Recommendations" icon={<SlidersHorizontal size={15} color={c.muted} />}>
           <View style={{ paddingHorizontal: 16, paddingVertical: 18 }}>
             <MixControls />
@@ -182,6 +207,8 @@ export default function Settings() {
           Kaleido · visual prototype · all data is local to this device
         </Txt>
       </ScrollView>
+
+      <FocusSheet open={focusOpen} onClose={() => setFocusOpen(false)} />
 
       <Sheet open={blocked} onClose={() => setBlocked(false)} title="Blocked accounts">
         <View style={{ paddingHorizontal: 18, paddingBottom: 24 }}>

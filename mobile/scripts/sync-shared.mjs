@@ -15,7 +15,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const from = join(here, '..', '..', 'src', 'lib')
 const to = join(here, '..', 'src', 'lib', 'shared')
 
-const FILES = ['types.ts', 'utils.ts', 'topics.ts', 'posts.ts', 'users.ts', 'social.ts', 'recommend.ts', 'search.ts']
+const FILES = ['types.ts', 'utils.ts', 'topics.ts', 'posts.ts', 'users.ts', 'social.ts', 'identity.ts', 'recommend.ts', 'search.ts']
 
 if (!existsSync(from)) {
   console.warn('[sync-shared] web app not found alongside mobile/ — using the committed copy')

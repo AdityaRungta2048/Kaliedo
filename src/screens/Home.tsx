@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useMotionValue, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowUp, Inbox, SlidersHorizontal, Sparkles } from 'lucide-react'
+import { ArrowUp, Crosshair, Inbox, SlidersHorizontal, Sparkles, X } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { useViewer } from '@/store/ViewerContext'
 import { buildFeed } from '@/lib/recommend'
@@ -28,6 +28,8 @@ export function Home() {
   const pullRotate = useTransform(pull, [0, 90], [0, 320])
   const firstLoad = useRef(true)
 
+  const focused = state.activeIdentity === 'alter' && state.alterEgo !== null
+
   const feed = useMemo(
     () => buildFeed({
       posts: state.posts,
@@ -38,8 +40,9 @@ export function Home() {
       socialFollowing: state.socialFollowing,
       seed: state.feedSeed,
       mutedTopics: new Set(state.mutedTopics),
+      focusNiche: focused ? state.alterEgo!.niche : null,
     }),
-    [state.posts, state.interests, state.following, state.feedMode, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics],
+    [state.posts, state.interests, state.following, state.feedMode, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics, focused, state.alterEgo],
   )
 
   // A short, honest skeleton on first paint and whenever the feed re-composes.
@@ -68,6 +71,22 @@ export function Home() {
     <div className="mx-auto flex w-full max-w-[1180px] gap-8 px-4 pb-16 pt-3 sm:px-6 lg:pt-6">
       <div className="min-w-0 flex-1">
         <div className="sticky top-[54px] z-20 -mx-4 mb-4 bg-canvas/90 px-4 py-2.5 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:top-0 lg:py-3">
+          {focused ? (
+            <div className="flex items-center gap-3 rounded-full border border-iris/30 bg-iris/[0.07] px-3.5 py-2">
+              <Crosshair size={14} className="shrink-0 text-iris" />
+              <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-ink">
+                Focused · {state.alterEgo!.niche} only
+                <span className="ml-1.5 font-normal text-muted">as {state.alterEgo!.name}</span>
+              </span>
+              <Pressable
+                onClick={() => { dispatch({ type: 'setIdentity', identity: 'main' }); toast('Back to your main feed') }}
+                aria-label="Leave focused mode"
+                className="shrink-0 rounded-full p-1 text-muted hover:text-ink"
+              >
+                <X size={14} />
+              </Pressable>
+            </div>
+          ) : (
           <div className="flex items-center gap-3">
             <FeedSwitcher mode={state.feedMode} onChange={(m) => dispatch({ type: 'setMode', mode: m })} />
             <Pressable
@@ -79,16 +98,17 @@ export function Home() {
               <span className="w-12"><MixBar mix={state.mix} height={5} /></span>
             </Pressable>
           </div>
-          {activeMode && (
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={activeMode.id} initial={{ opacity: 0, y: -3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }} className="mt-2 text-[12px] text-faint"
-              >
-                {activeMode.blurb} · {feed.length} pieces
-              </motion.p>
-            </AnimatePresence>
           )}
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={focused ? 'focused' : activeMode?.id} initial={{ opacity: 0, y: -3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }} className="mt-2 text-[12px] text-faint"
+            >
+              {focused
+                ? `Nothing outside ${state.alterEgo!.niche} reaches this feed · ${feed.length} pieces`
+                : `${activeMode?.blurb ?? ''} · ${feed.length} pieces`}
+            </motion.p>
+          </AnimatePresence>
         </div>
 
         {/* Pull to refresh — mobile only, spring-loaded. */}
@@ -114,10 +134,14 @@ export function Home() {
                 <EmptyState
                   icon={<Inbox size={22} />}
                   title="Nothing here yet"
-                  body={state.feedMode === 'following'
-                    ? 'You are not following anyone whose work landed today. Explore is a good place to fix that.'
-                    : 'Widen your mix or add an interest and this will fill up.'}
-                  action={<Button onClick={() => dispatch({ type: 'setMode', mode: 'explore' })}>Open Explore</Button>}
+                  body={focused
+                    ? `Nobody has published in ${state.alterEgo!.niche} yet. Focused mode shows this niche and nothing else.`
+                    : state.feedMode === 'following'
+                      ? 'You are not following anyone whose work landed today. Explore is a good place to fix that.'
+                      : 'Widen your mix or add an interest and this will fill up.'}
+                  action={focused
+                    ? <Button onClick={() => dispatch({ type: 'setIdentity', identity: 'main' })}>Leave focused mode</Button>
+                    : <Button onClick={() => dispatch({ type: 'setMode', mode: 'explore' })}>Open Explore</Button>}
                 />
               </motion.div>
             ) : (

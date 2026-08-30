@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, EllipsisVertical, Share2, X } from 'lucide-react'
+import { ArrowLeft, EllipsisVertical, Share2, VenetianMask, X } from 'lucide-react'
 import type { Post } from '@/lib/types'
-import { userById } from '@/lib/users'
+import { displayAuthor, isAnonymous } from '@/lib/identity'
 import { useApp } from '@/store/AppContext'
 import { relevanceOf } from '@/lib/recommend'
 import { useIsTablet } from '@/lib/useMediaQuery'
@@ -12,6 +12,7 @@ import { Avatar, Pressable, TopicChip, VerifiedMark } from '@/components/ui/Prim
 import { CoverArt } from '@/components/brand/CoverArt'
 import { FollowButton } from '@/components/profile/FollowButton'
 import { CommentButton, CommentSheet, LikeButton, RepostButton, SaveButton, ShareSheet, WhyThisPost } from './Interactions'
+import { RevealPanel } from './RevealPanel'
 import { PostMenu } from './PostMenu'
 import { blockLayoutId } from './PostBlock'
 
@@ -22,7 +23,8 @@ import { blockLayoutId } from './PostBlock'
 export function PostReader({ post, onClose, onOpenPost }: { post: Post; onClose: () => void; onOpenPost: (id: string) => void }) {
   const { state, reducedMotion } = useApp()
   const isTablet = useIsTablet()
-  const author = userById(post.authorId)
+  const anon = isAnonymous(post)
+  const author = displayAuthor(post)
   const [comments, setComments] = useState(false)
   const [share, setShare] = useState(false)
   const [menu, setMenu] = useState(false)
@@ -71,14 +73,20 @@ export function PostReader({ post, onClose, onOpenPost }: { post: Post; onClose:
           <Pressable onClick={onClose} aria-label="Close reader" className="rounded-full p-2 text-muted hover:bg-ink/5 hover:text-ink">
             {isTablet ? <X size={18} /> : <ArrowLeft size={19} />}
           </Pressable>
-          <Avatar user={author} size={30} />
+          <Avatar user={author} size={30} link={!anon} />
           <div className="flex min-w-0 flex-1 items-center gap-1.5">
-            <Link to={`/u/${author.handle}`} onClick={onClose} className="truncate text-[13.5px] font-semibold text-ink hover:underline">
-              {author.name}
-            </Link>
-            {author.verified && <VerifiedMark />}
+            {anon ? (
+              <span className="flex items-center gap-1.5 truncate text-[13.5px] font-semibold text-ink">
+                <VenetianMask size={13} className="shrink-0 text-muted" /> Anonymous
+              </span>
+            ) : (
+              <Link to={`/u/${author.handle}`} onClick={onClose} className="truncate text-[13.5px] font-semibold text-ink hover:underline">
+                {author.name}
+              </Link>
+            )}
+            {!anon && author.verified && <VerifiedMark />}
           </div>
-          <FollowButton userId={author.id} size="sm" />
+          {!anon && <FollowButton userId={author.id} size="sm" />}
           <Pressable onClick={() => setMenu(true)} aria-label="Post options" className="rounded-full p-2 text-muted hover:bg-ink/5 hover:text-ink">
             <EllipsisVertical size={17} />
           </Pressable>
@@ -131,14 +139,17 @@ export function PostReader({ post, onClose, onOpenPost }: { post: Post; onClose:
               {post.topics.map((t) => <TopicChip key={t} topic={t} as="link" />)}
             </div>
 
-            <div className="mt-6"><WhyThisPost post={post} relevance={relevance} /></div>
+            <div className="mt-6 space-y-3">
+              <RevealPanel post={post} />
+              <WhyThisPost post={post} relevance={relevance} />
+            </div>
 
             {related.length > 0 && (
               <section className="mt-8 border-t border-line pt-6">
                 <h2 className="label-xs mb-3">Keep reading</h2>
                 <ul className="space-y-2">
                   {related.map((r) => {
-                    const ra = userById(r.authorId)
+                    const ra = displayAuthor(r)
                     return (
                       <li key={r.id}>
                         <Pressable

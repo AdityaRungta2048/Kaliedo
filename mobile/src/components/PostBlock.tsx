@@ -2,9 +2,9 @@ import { memo, useRef } from 'react'
 import { StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import { useRouter } from 'expo-router'
-import { Image as ImageIcon, Sparkles } from 'lucide-react-native'
+import { Image as ImageIcon, Sparkles, VenetianMask } from 'lucide-react-native'
 import type { Post, Relevance } from '@/lib/shared/types'
-import { userById } from '@/lib/shared/users'
+import { displayAuthor, isAnonymous } from '@/lib/shared/identity'
 import { RELEVANCE_COPY } from '@/lib/shared/recommend'
 import { compact, excerpt, readTime, timeAgo } from '@/lib/shared/utils'
 import { useTheme } from '@/theme/ThemeProvider'
@@ -23,7 +23,8 @@ function PostBlockBase({ post, relevance, index = 0 }: { post: Post; relevance?:
   const router = useRouter()
   const { open, postId } = useReader()
   const ref = useRef<View>(null)
-  const author = userById(post.authorId)
+  const anon = isAnonymous(post)
+  const author = displayAuthor(post)
   const hidden = postId === post.id
 
   const tint = relevance === 'related' ? c.moss : relevance === 'explore' ? c.iris : c.ember
@@ -51,9 +52,13 @@ function PostBlockBase({ post, relevance, index = 0 }: { post: Post; relevance?:
         >
           <View style={{ padding: 15 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
-              <Avatar user={author} size={28} onPress={() => router.push({ pathname: '/u/[handle]', params: { handle: author.handle } })} />
+              <Avatar
+                user={author} size={28}
+                onPress={anon ? () => {} : () => router.push({ pathname: '/u/[handle]', params: { handle: author.handle } })}
+              />
+              {anon && <VenetianMask size={13} color={c.muted} />}
               <Txt size={13.5} weight="semi" numberOfLines={1} style={{ flexShrink: 1 }}>{author.name}</Txt>
-              {author.verified && <Verified />}
+              {!anon && author.verified && <Verified />}
               <Txt size={12.5} color={c.faint}>· {timeAgo(post.minutesAgo)}</Txt>
             </View>
 

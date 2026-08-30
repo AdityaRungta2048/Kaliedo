@@ -4,15 +4,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Animated, { FadeIn, SlideInRight, SlideOutLeft } from 'react-native-reanimated'
 import { useRouter } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker'
-import { ArrowLeft, ArrowRight, Check, FileText, ImagePlus, Sparkles, Trash2, X } from 'lucide-react-native'
+import { ArrowLeft, ArrowRight, Check, FileText, ImagePlus, Sparkles, Trash2, VenetianMask, X } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { LEXICON, ONBOARDING_TOPICS, tintFor } from '@/lib/shared/topics'
 import type { Art, ArtMotif, Post, PostKind } from '@/lib/shared/types'
 import { readTime } from '@/lib/shared/utils'
 import { RADIUS } from '@/theme/tokens'
-import { CoverArt } from '@/components/Art'
-import { Avatar, Button, Chip, Label, Tap, Txt } from '@/components/UI'
+import { AvatarArt, CoverArt } from '@/components/Art'
+import { ANON_USER } from '@/lib/shared/identity'
+import { Avatar, Button, Chip, Label, Switch, Tap, Txt } from '@/components/UI'
 
 const KINDS: { id: PostKind; label: string; blurb: string }[] = [
   { id: 'essay', label: 'Essay', blurb: 'Something with a beginning and an end' },
@@ -45,6 +46,7 @@ export default function Create() {
   const [art, setArt] = useState<Art | null>(null)
   const [photo, setPhoto] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
+  const [anonymous, setAnonymous] = useState(false)
 
   const paragraphs = useMemo(() => bodyText.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean), [bodyText])
   const suggested = useMemo(() => suggestTopics(`${title} ${bodyText}`), [title, bodyText])
@@ -70,11 +72,12 @@ export default function Create() {
       art: photo ? undefined : art ?? undefined,
       photo: photo ?? undefined,
       concepts: suggestTopics(bodyText),
+      anonymous: anonymous || undefined,
     }
     setTimeout(() => {
       dispatch({ type: 'addPost', post })
-      toast('Published to your feed', 'check')
-      setStep(0); setTitle(''); setBodyText(''); setTopics([]); setArt(null); setPhoto(null); setPublishing(false)
+      toast(anonymous ? 'Published anonymously' : 'Published to your feed', 'check')
+      setStep(0); setTitle(''); setBodyText(''); setTopics([]); setArt(null); setPhoto(null); setPublishing(false); setAnonymous(false)
       router.push('/')
     }, 650)
   }
@@ -229,10 +232,40 @@ export default function Create() {
           {step === 4 && (
             <View style={{ gap: 14 }}>
               <Txt family="display" size={22} style={{ letterSpacing: -0.4 }}>How it will look</Txt>
+              <View style={{
+                flexDirection: 'row', gap: 11, padding: 14, borderRadius: RADIUS.lg,
+                backgroundColor: c.canvas, borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.line,
+              }}>
+                <VenetianMask size={17} color={c.muted} style={{ marginTop: 2 }} />
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Txt size={14} weight="medium" style={{ flex: 1 }}>Publish anonymously</Txt>
+                    <Switch value={anonymous} onChange={setAnonymous} />
+                  </View>
+                  <Txt size={12.5} color={c.muted} style={{ marginTop: 5, lineHeight: 19 }}>
+                    {anonymous
+                      ? 'Your name will not appear anywhere on this piece. It still earns reach, replies and saves. You can put your name on it later — but a signed post can never be made anonymous.'
+                      : 'Your name will appear on this piece. Turn this on if you would rather it stood on its own.'}
+                  </Txt>
+                </View>
+              </View>
+
               <View style={{ padding: 18, borderRadius: RADIUS.lg, backgroundColor: c.surface, borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.line }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
-                  <Avatar user={me} size={30} onPress={() => {}} />
-                  <Txt size={13.5} weight="semi">{me.name}</Txt>
+                  {anonymous ? (
+                    <>
+                      <View style={{ width: 30, height: 30, borderRadius: 15, overflow: 'hidden' }}>
+                        <AvatarArt seed={ANON_USER.avatar.seed} palette={ANON_USER.avatar.palette} size={30} />
+                      </View>
+                      <VenetianMask size={13} color={c.muted} />
+                      <Txt size={13.5} weight="semi">Anonymous</Txt>
+                    </>
+                  ) : (
+                    <>
+                      <Avatar user={me} size={30} onPress={() => {}} />
+                      <Txt size={13.5} weight="semi">{me.name}</Txt>
+                    </>
+                  )}
                   <Txt size={12.5} color={c.faint}>· now</Txt>
                 </View>
                 <Txt family="display" size={21} style={{ marginTop: 12, lineHeight: 27 }}>{title || 'Untitled'}</Txt>
@@ -267,7 +300,7 @@ export default function Create() {
         {step < STEPS.length - 1 ? (
           <Button label="Continue" iconSide="right" icon={<ArrowRight size={14} color={c.onInk} />} disabled={!canAdvance} onPress={() => setStep(step + 1)} />
         ) : (
-          <Button label={publishing ? 'Publishing…' : 'Publish'} variant="accent" size="lg" loading={publishing}
+          <Button label={publishing ? 'Publishing…' : anonymous ? 'Publish anonymously' : 'Publish'} variant="accent" size="lg" loading={publishing}
             icon={<Check size={15} color="#fff" />} onPress={publish} />
         )}
       </View>

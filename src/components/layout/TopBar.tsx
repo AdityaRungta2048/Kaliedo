@@ -1,14 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Mail, Search } from 'lucide-react'
+import { Crosshair, Mail, Search } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { ThemeToggle } from '@/components/ui/ThemeSwitcher'
 import { Pressable } from '@/components/ui/Primitives'
+import { cx } from '@/lib/utils'
 
-export function TopBar() {
+export function TopBar({ onOpenFocus }: { onOpenFocus: () => void }) {
   const { state } = useApp()
   const navigate = useNavigate()
   const unread = state.conversations.filter((c) => c.messages.some((m) => m.from === 'them' && !m.read)).length
+  const focused = state.activeIdentity === 'alter' && state.alterEgo !== null
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-[rgb(var(--k-nav))]/95 backdrop-blur-2xl safe-top lg:hidden">
@@ -18,6 +20,13 @@ export function TopBar() {
           <Wordmark className="text-[18px]" />
         </Link>
         <div className="ml-auto flex items-center gap-0.5">
+          <Pressable
+            onClick={onOpenFocus} aria-label="Focused mode"
+            className={cx('flex h-9 w-9 items-center justify-center rounded-full transition-colors',
+              focused ? 'text-iris' : 'text-muted hover:bg-ink/5 hover:text-ink')}
+          >
+            <Crosshair size={19} />
+          </Pressable>
           <ThemeToggle />
           <Pressable onClick={() => navigate('/discover?focus=1')} aria-label="Search"
             className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-ink/5 hover:text-ink">

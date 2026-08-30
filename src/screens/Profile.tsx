@@ -6,6 +6,7 @@ import { useApp } from '@/store/AppContext'
 import { useViewer } from '@/store/ViewerContext'
 import { USERS } from '@/lib/users'
 import { compact, cx, excerpt, timeAgo } from '@/lib/utils'
+import { isAnonymous } from '@/lib/identity'
 import { PostBlock } from '@/components/post/PostBlock'
 import { CoverArt } from '@/components/brand/CoverArt'
 import { Avatar, Button, EmptyState, Pressable, TopicChip, VerifiedMark } from '@/components/ui/Primitives'
@@ -30,7 +31,9 @@ export function Profile({ self = false }: { self?: boolean }) {
   if (!user) return <Navigate to="/discover" replace />
 
   const isMe = user.id === me.id
-  const posts = state.posts.filter((p) => p.authorId === user.id)
+  // Anonymous pieces stay off the public profile. On your own profile they are
+  // visible so you can find and claim them; nowhere else are they attributable.
+  const posts = state.posts.filter((p) => p.authorId === user.id && (isMe || !isAnonymous(p)))
   const saved = state.posts.filter((p) => state.saves.includes(p.id))
   const shown = tab === 'saved' ? saved : posts
 
@@ -74,7 +77,7 @@ export function Profile({ self = false }: { self?: boolean }) {
 
         <div className="mt-4 flex gap-6">
           {[
-            { label: 'Pieces', value: posts.length },
+            { label: 'Pieces', value: posts.filter((p) => !isAnonymous(p)).length },
             { label: 'Readers', value: user.followers + (state.following.includes(user.id) && !isMe ? 1 : 0) },
             { label: 'Reading', value: isMe ? state.following.length : user.following },
           ].map((s) => (

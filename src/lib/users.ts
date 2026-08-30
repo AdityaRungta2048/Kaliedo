@@ -1,6 +1,23 @@
 import type { User } from './types'
 
 export const ME_ID = 'u_me'
+export const ANON_ID = 'u_anon'
+
+/**
+ * The face every anonymous post wears. Deliberately kept out of USERS so it can
+ * never surface in search, suggestions, or anywhere people are listed.
+ */
+export const ANON_USER: User = {
+  id: ANON_ID,
+  handle: 'anonymous',
+  name: 'Anonymous',
+  bio: 'Someone who wanted the writing read before the name.',
+  interests: [],
+  followers: 0,
+  following: 0,
+  avatar: { seed: 3, palette: 'ink' },
+  joined: '—',
+}
 
 export const USERS: User[] = [
   {
@@ -99,5 +116,6 @@ export const USERS: User[] = [
 export const USER_BY_ID: Record<string, User> = Object.fromEntries(USERS.map((u) => [u.id, u]))
 
 export function userById(id: string): User {
+  if (id === ANON_ID) return ANON_USER
   return USER_BY_ID[id] ?? USERS[0]
 }

@@ -7,6 +7,7 @@ import {
 import { useApp } from '@/store/AppContext'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { Avatar, Pressable } from '@/components/ui/Primitives'
+import { IdentityChip } from './FocusMode'
 import { cx } from '@/lib/utils'
 
 export const PRIMARY_NAV = [
@@ -17,7 +18,7 @@ export const PRIMARY_NAV = [
   { to: '/create', label: 'Write', icon: PenLine },
 ]
 
-export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+export function Sidebar({ collapsed, onToggle, onOpenFocus }: { collapsed: boolean; onToggle: () => void; onOpenFocus: () => void }) {
   const { state, me, setDemoOpen } = useApp()
   const unread = state.notifications.filter((n) => n.unread).length
   const unreadMsgs = state.conversations.filter((c) => c.messages.some((m) => m.from === 'them' && !m.read)).length
@@ -92,6 +93,8 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
       </nav>
 
       <div className={cx('flex flex-col gap-2 border-t border-line py-3', collapsed ? 'items-center px-2' : 'px-3')}>
+        <IdentityChip onOpen={onOpenFocus} collapsed={collapsed} />
+
         <Pressable onClick={() => setDemoOpen(true)} title="Demo mode"
           className={cx('flex items-center rounded-xl text-[13.5px] font-medium text-muted transition-colors hover:bg-ink/[0.04] hover:text-ink',
             collapsed ? 'h-10 w-10 justify-center' : 'h-10 gap-3.5 px-3.5')}

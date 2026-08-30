@@ -7,16 +7,17 @@ import Animated, {
   useSharedValue, withSpring, withTiming,
 } from 'react-native-reanimated'
 import { useRouter } from 'expo-router'
-import { ArrowLeft, ChevronDown, Sparkles } from 'lucide-react-native'
+import { ArrowLeft, ChevronDown, Sparkles, TrendingUp, VenetianMask } from 'lucide-react-native'
 import type { Post } from '@/lib/shared/types'
 import { userById } from '@/lib/shared/users'
+import { canReveal, displayAuthor, hasBigReach, isAnonymous } from '@/lib/shared/identity'
 import { relevanceOf, RELEVANCE_COPY } from '@/lib/shared/recommend'
 import { excerpt, readTime, timeAgo } from '@/lib/shared/utils'
 import { useApp } from '@/store/AppContext'
 import { useReader, type Origin } from '@/store/ReaderContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { RADIUS } from '@/theme/tokens'
-import { Avatar, Card, Chip, Divider, Label, Tap, Txt, Verified } from './UI'
+import { Avatar, Button, Card, Chip, Divider, Label, Tap, Txt, Verified } from './UI'
 import { CoverArt } from './Art'
 import { CommentButton, FollowButton, LikeButton, RepostButton, SaveButton, ShareButton } from './PostActions'
 import { CommentSheet, ShareSheet } from './Sheets'
@@ -30,14 +31,16 @@ const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window')
  */
 export function PostReader({ post, origin, onClose }: { post: Post; origin: Origin; onClose: () => void }) {
   const { c } = useTheme()
-  const { state } = useApp()
+  const { state, dispatch, me, toast } = useApp()
+  const [confirmReveal, setConfirmReveal] = useState(false)
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const [comments, setComments] = useState(false)
   const [share, setShare] = useState(false)
   const [why, setWhy] = useState(false)
 
-  const author = userById(post.authorId)
+  const anon = isAnonymous(post)
+  const author = displayAuthor(post)
   const relevance = relevanceOf(post, state.interests)
   const progress = useSharedValue(0)
   const dragY = useSharedValue(0)
@@ -119,12 +122,16 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
               <Tap onPress={dismiss} accessibilityLabel="Close" style={{ padding: 8 }}>
                 <ArrowLeft size={21} color={c.muted} />
               </Tap>
-              <Avatar user={author} size={30} onPress={() => { dismiss(); setTimeout(() => router.push({ pathname: '/u/[handle]', params: { handle: author.handle } }), 260) }} />
+              <Avatar
+                user={author} size={30}
+                onPress={anon ? () => {} : () => { dismiss(); setTimeout(() => router.push({ pathname: '/u/[handle]', params: { handle: author.handle } }), 260) }}
+              />
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flex: 1 }}>
+                {anon && <VenetianMask size={13} color={c.muted} />}
                 <Txt size={13.5} weight="semi" numberOfLines={1} style={{ flexShrink: 1 }}>{author.name}</Txt>
-                {author.verified && <Verified />}
+                {!anon && author.verified && <Verified />}
               </View>
-              <FollowButton userId={author.id} size="sm" />
+              {!anon && <FollowButton userId={author.id} size="sm" />}
             </View>
           </GestureDetector>
 
@@ -170,6 +177,44 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
               ))}
             </View>
 
+            {canReveal(post, me.id) && (
+              <Card style={{ marginTop: 20, padding: 14 }}>
+                <View style={{ flexDirection: 'row', gap: 10 }}>
+                  <VenetianMask size={16} color={c.muted} style={{ marginTop: 2 }} />
+                  <View style={{ flex: 1 }}>
+                    <Txt size={13} weight="medium">Only you know this is yours</Txt>
+                    <Txt size={12.5} color={c.muted} style={{ marginTop: 4, lineHeight: 19 }}>
+                      It is published without your name. You can put your name on it whenever you like — but not the other way round.
+                    </Txt>
+                    {hasBigReach(post, state.likes.includes(post.id) ? 1 : 0) && (
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 9 }}>
+                        <TrendingUp size={12} color={c.ember} />
+                        <Txt size={12.5} weight="medium" color={c.ember}>Doing well. Worth claiming?</Txt>
+                      </View>
+                    )}
+                    {confirmReveal ? (
+                      <View style={{ marginTop: 12, gap: 10 }}>
+                        <Txt size={12.5} style={{ lineHeight: 19 }}>
+                          This is permanent. Once your name is on it, it cannot be made anonymous again.
+                        </Txt>
+                        <View style={{ flexDirection: 'row', gap: 8 }}>
+                          <Button
+                            label="Yes, claim it" variant="accent" size="sm"
+                            onPress={() => { dispatch({ type: 'revealPost', postId: post.id }); toast(`Published as ${me.name}`, 'check'); setConfirmReveal(false) }}
+                          />
+                          <Button label="Keep it anonymous" variant="ghost" size="sm" onPress={() => setConfirmReveal(false)} />
+                        </View>
+                      </View>
+                    ) : (
+                      <View style={{ marginTop: 12, alignItems: 'flex-start' }}>
+                        <Button label={`Claim as ${me.name}`} variant="outline" size="sm" onPress={() => setConfirmReveal(true)} />
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </Card>
+            )}
+
             <Card style={{ marginTop: 20, padding: 0 }}>
               <Tap onPress={() => setWhy((w) => !w)} haptic={false}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 9, padding: 14 }}>
@@ -203,7 +248,7 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
                         flexDirection: 'row', gap: 11, padding: 12, borderRadius: RADIUS.md,
                         backgroundColor: c.canvas, borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.line,
                       }}>
-                      <Avatar user={userById(r.authorId)} size={26} onPress={() => {}} />
+                      <Avatar user={displayAuthor(r)} size={26} onPress={() => {}} />
                       <View style={{ flex: 1 }}>
                         <Txt family="display" size={14.5} numberOfLines={1}>{r.title}</Txt>
                         <Txt size={12.5} color={c.muted} numberOfLines={1} style={{ marginTop: 2 }}>{excerpt(r.body, 64)}</Txt>
@@ -238,7 +283,8 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
 
 export function ReaderLayer() {
   const { postId, origin, close } = useReader()
-  const { state } = useApp()
+  const { state, dispatch, me, toast } = useApp()
+  const [confirmReveal, setConfirmReveal] = useState(false)
   const post = postId ? state.posts.find((p) => p.id === postId) : null
   if (!post || !origin) return null
   return <PostReader key={post.id} post={post} origin={origin} onClose={close} />
