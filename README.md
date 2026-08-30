@@ -13,9 +13,20 @@ from a mix you can see and change — **60% familiar / 25% related / 15% new**, 
 This repository is the **visual and interactive prototype**. There is no backend, no auth, no
 real recommendation model — every screen runs on local mock data.
 
+It ships as two apps that share one brain:
+
+| | | |
+|---|---|---|
+| **Web** | repository root | React + Vite, deploys to Vercel |
+| **Mobile** | [`mobile/`](./mobile) | Expo + React Native, runs in Expo Go on Android and iOS |
+
+Both import the same mock data, topic graph, feed composer and semantic search from
+`src/lib` — see [mobile/README.md](./mobile/README.md) for how that is shared and how to
+run the app on a phone.
+
 ---
 
-## Running it
+## Running the web app
 
 ```bash
 npm install
@@ -46,6 +57,7 @@ run `npx vercel --prod` from a machine that is logged in.
 ## Where things live
 
 ```
+mobile/           the native app (see mobile/README.md)
 src/
   lib/
     posts.ts        32 written posts — the seed library

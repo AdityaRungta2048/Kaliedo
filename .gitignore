@@ -3,3 +3,8 @@ dist
 .vercel
 .DS_Store
 *.local
+
+# Expo app has its own ignores in mobile/.gitignore
+mobile/node_modules
+mobile/.expo
+mobile/dist

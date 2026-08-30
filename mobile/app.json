@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Kaleida",
+    "slug": "kaleida",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "kaleida",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F6F3EC",
+      "dark": { "backgroundColor": "#0F0E0D" }
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.kaleida.prototype"
+    },
+    "android": {
+      "package": "app.kaleida.prototype",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#141210"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      ["expo-splash-screen", { "backgroundColor": "#F6F3EC", "image": "./assets/splash-icon.png", "imageWidth": 180 }],
+      ["expo-image-picker", { "photosPermission": "Kaleida uses your photos so you can add one to a piece you write." }]
+    ],
+    "experiments": { "typedRoutes": true }
+  }
+}

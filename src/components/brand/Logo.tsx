@@ -14,11 +14,13 @@ export function LogoMark({ size = 28, className, animate = false }: { size?: num
       transition={{ type: 'spring', stiffness: 140, damping: 16 }}
     >
       <rect width="64" height="64" rx="15" className="fill-ink" />
+      {/* Three facets offset by 40°, not 120° — an equilateral triangle rotated
+          by a third of a turn lands back on itself and the mark reads as one shape. */}
       <g transform="translate(32 32)">
-        <path d="M0 -17 L14.7 8.5 L-14.7 8.5 Z" className="fill-ember" />
-        <path d="M0 -17 L14.7 8.5 L-14.7 8.5 Z" className="fill-moss" opacity="0.9" transform="rotate(120)" />
-        <path d="M0 -17 L14.7 8.5 L-14.7 8.5 Z" className="fill-amber" opacity="0.9" transform="rotate(240)" />
-        <circle r="4.6" className="fill-canvas" />
+        <path d="M0 -19 L16.5 9.5 L-16.5 9.5 Z" className="fill-ember" opacity="0.78" />
+        <path d="M0 -19 L16.5 9.5 L-16.5 9.5 Z" className="fill-moss" opacity="0.78" transform="rotate(40)" />
+        <path d="M0 -19 L16.5 9.5 L-16.5 9.5 Z" className="fill-amber" opacity="0.78" transform="rotate(80)" />
+        <circle r="4.2" className="fill-ink" />
       </g>
     </motion.svg>
   )
