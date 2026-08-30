@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light — warm bone paper, ink type. Designed, not inverted. */
+    --k-canvas: 246 243 236;
+    --k-surface: 253 251 247;
+    --k-raised: 255 255 255;
+    --k-ink: 24 21 18;
+    --k-muted: 108 100 89;
+    --k-faint: 156 147 134;
+    --k-line: 228 221 209;
+    --k-shadow: 61 46 28;
+
+    --k-ember: 209 74 40;
+    --k-moss: 47 125 107;
+    --k-amber: 190 138 32;
+    --k-iris: 90 84 196;
+
+    --k-nav: 253 251 247;
+    color-scheme: light;
+  }
+
+  .dark {
+    /* Dark — warm charcoal, never pure black; type warmed to avoid glare. */
+    --k-canvas: 15 14 13;
+    --k-surface: 24 22 21;
+    --k-raised: 32 29 27;
+    --k-ink: 241 236 228;
+    --k-muted: 158 149 137;
+    --k-faint: 118 110 100;
+    --k-line: 46 42 39;
+    --k-shadow: 0 0 0;
+
+    --k-ember: 232 108 72;
+    --k-moss: 90 178 155;
+    --k-amber: 226 176 76;
+    --k-iris: 143 137 240;
+
+    --k-nav: 24 22 21;
+    color-scheme: dark;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    /* The theme morph: colors ease instead of snapping. */
+    transition: background-color .45s cubic-bezier(0.22,1,0.36,1), color .45s cubic-bezier(0.22,1,0.36,1);
+    overscroll-behavior-y: none;
+  }
+
+  /* Everything that carries theme color participates in the morph. */
+  .theming, .theming * {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+    transition-duration: .45s;
+    transition-timing-function: cubic-bezier(0.22,1,0.36,1);
+  }
+
+  * { -webkit-tap-highlight-color: transparent; }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--k-ember));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection { background: rgb(var(--k-ember) / .18); }
+
+  /* Scrollbars, quietly. */
+  .scroll-slim::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scroll-slim::-webkit-scrollbar-thumb { background: rgb(var(--k-line)); border-radius: 99px; }
+  .scroll-slim::-webkit-scrollbar-track { background: transparent; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-line rounded-2xl;
+  }
+  .hairline { @apply border-line; }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full text-[13.5px] font-medium
+           transition-colors duration-200 select-none disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary { @apply btn bg-ink text-canvas px-4 h-9 hover:opacity-90; }
+  .btn-ghost   { @apply btn text-muted hover:text-ink hover:bg-ink/5 px-3 h-9; }
+  .btn-outline { @apply btn border border-line text-ink px-4 h-9 hover:bg-ink/[0.04]; }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1
+           text-[12px] font-medium text-muted transition-colors;
+  }
+
+  .prose-kaleida {
+    @apply font-read text-[17px] leading-[1.72] text-ink/90;
+  }
+  .prose-kaleida p + p { margin-top: 1.05em; }
+  .prose-kaleida em { @apply italic; }
+
+  .label-xs { @apply text-[11px] uppercase tracking-[0.14em] font-semibold text-faint; }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Paper grain — a whisper of texture so surfaces don't feel like flat CSS. */
+  .grain::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    opacity: .035; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .dark .grain::after { mix-blend-mode: screen; opacity: .05; }
+}
+
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-top { padding-top: env(safe-area-inset-top); }
