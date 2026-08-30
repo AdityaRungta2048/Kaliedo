@@ -1,64 +1,77 @@
 # Deploying Kaleida
 
-Both apps deploy from **GitHub Actions**, so the only thing you ever paste is a secret
-into GitHub's own settings page. Never share a token in chat or commit one to the repo.
+Everything below runs **from your own machine**. Expo builds the app in its cloud, so you
+don't need Android Studio, a Mac, or a Play Store account — but you trigger it yourself
+and watch it happen.
 
-Everything below is one-time setup. After it, every push deploys.
+> **Node 22 or newer is required.** `eas-cli` depends on a package that refuses to install
+> on Node 20. Check with `node -v`; if it's older, get 22 LTS from
+> [nodejs.org](https://nodejs.org) first. This is the single most likely thing to trip you up.
 
 ---
 
-## Get the app onto your Android phone
+## Put the app on your Android phone
 
-This is the one that matters most: it produces a real `.apk` you install once and then
-open from your home screen, with no computer involved.
+### One-time setup
 
-### 1. Create an Expo account
+```bash
+cd mobile
+npm install
+npx eas-cli login          # sign up free at expo.dev first
+npx eas-cli init           # creates the Expo project and links this folder
+```
 
-Sign up at [expo.dev](https://expo.dev). Free.
+`eas init` asks you to confirm the project name (`kaleida`) and then writes your project
+ID into `app.json`. Commit that change — it's how updates find your app later.
 
-### 2. Create an access token
+### Build the APK
 
-[expo.dev/settings/access-tokens](https://expo.dev/settings/access-tokens) → **Create
-token**. Copy it — it is shown once.
+```bash
+npx eas-cli build --platform android --profile preview
+```
 
-### 3. Create the project
+The `preview` profile in `eas.json` is set to produce an installable `.apk`.
 
-On [expo.dev](https://expo.dev) → **Create a project**, name it `kaleida`. Copy two things
-from the project page:
+On the first build EAS asks:
 
-- the **Project ID** (a UUID)
-- your **account name** (the owner slug, e.g. `adityarungta`)
+> *Generate a new Android Keystore?*
 
-### 4. Add three secrets to GitHub
+Say **yes**. It creates the signing key, stores it on your Expo account, and reuses it for
+every future build. You never deal with it again.
 
-Repository → **Settings → Secrets and variables → Actions → New repository secret**:
+The build then runs on Expo's servers — roughly **10–20 minutes** on the free tier. You can
+close the terminal; progress is at [expo.dev](https://expo.dev) under your project's
+**Builds** tab.
 
-| Name | Value |
-|---|---|
-| `EXPO_TOKEN` | the access token from step 2 |
-| `EAS_PROJECT_ID` | the project UUID from step 3 |
-| `EXPO_OWNER` | your Expo account name from step 3 |
+### Install it
 
-### 5. Build it
+When it finishes you get a URL and a QR code. Open either **on your phone**, download the
+`.apk`, and tap it. Android will warn about installing outside the Play Store and ask you
+to allow your browser to install apps — that's expected and you only grant it once.
 
-Repository → **Actions → Build Android app → Run workflow**, leave the profile on
-`preview`, and run it. It takes roughly 10–20 minutes on EAS's free queue.
+Kaleida is now a real app on your home screen. No computer, no dev server, no Expo Go.
 
-When it finishes, open the run and the **summary** contains a download link. Open that
-link on your phone, download the `.apk`, and install it. Android will ask you to allow
-installing from your browser — that is expected for an app outside the Play Store.
+---
 
-### 6. Updating it later
+## Push updates without rebuilding
 
-Once the app is installed, the **Publish mobile update** workflow runs automatically on
-every push that touches `mobile/` or `src/lib/`. Your phone picks up the new JavaScript
-the next time you open the app. No rebuild, no reinstall.
+Once the app is installed, changing JavaScript doesn't need a new APK:
 
-Rebuild the `.apk` only when native dependencies change.
+```bash
+cd mobile
+npm run sync                                    # pull the latest shared code from the web app
+npx eas-cli update --branch preview -m "what changed"
+```
 
-### Just want to try it right now?
+Your phone picks it up the next time you open the app. Seconds, not twenty minutes.
 
-If you have Node installed, skip all of the above:
+Rebuild the APK **only** when native dependencies change — a new `expo-*` package, or an
+Expo SDK upgrade. Editing screens, styling, mock data or the recommendation logic never
+needs one.
+
+---
+
+## Just want a quick look first?
 
 ```bash
 cd mobile
@@ -67,48 +80,53 @@ npx expo start --tunnel
 ```
 
 Install **Expo Go** from the Play Store and scan the QR code. This runs off your computer,
-so it stops working when you close the terminal — good for a look, not for daily use.
+so it stops when you close the terminal — good for a look, not for daily use. Skip it if
+you're going to build the APK anyway.
 
 ---
 
-## Get the web app online
+## Put the web app online
 
-### Fastest path — no tokens at all
+Also from your machine, no GitHub involved:
 
-Go to [vercel.com/new](https://vercel.com/new), import `AdityaRungta2048/Kaliedo`, and
-accept the detected settings:
+```bash
+npm install -g vercel
+vercel login
+vercel --prod
+```
 
-- Framework preset: **Vite**
-- Build command: `npm run build`
-- Output directory: `dist`
+Answer the setup prompts once (accept the detected **Vite** settings — build `npm run build`,
+output `dist`). `vercel.json` already routes every path to `index.html` for the router.
+After that, `vercel --prod` redeploys any time you want.
 
-Vercel then redeploys on every push by itself. `vercel.json` already routes all paths to
-`index.html` for the client-side router. **For most people this is the right choice** —
-the GitHub Actions workflow below only adds value if you want the deploy gated behind CI.
-
-### Via GitHub Actions instead
-
-If you would rather deploy from CI, add three secrets:
-
-| Name | Where to find it |
-|---|---|
-| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) |
-| `VERCEL_ORG_ID` | Vercel project → Settings → General |
-| `VERCEL_PROJECT_ID` | Vercel project → Settings → General |
-
-The **Deploy web to Vercel** workflow then runs on every push and prints the live URL in
-the run summary. The project must already exist on Vercel — create it once with the import
-above, or with `vercel link` locally.
+If you'd rather it deploy by itself on each push, import the repo at
+[vercel.com/new](https://vercel.com/new) instead — that needs no tokens either.
 
 ---
 
-## What the workflows do
+## The GitHub workflows
 
-| Workflow | Trigger | Result |
-|---|---|---|
-| `deploy-web.yml` | push (non-mobile changes) | typecheck, build, deploy to Vercel production |
-| `build-android.yml` | manual | an installable `.apk` on EAS |
-| `publish-update.yml` | push touching `mobile/` or `src/lib/` | OTA update to installed apps |
+`.github/workflows/` still holds three workflows, but they are now **manual only** — none
+of them run on push, so nothing fires at you unexpectedly. They're there if you ever want
+the deploy gated behind CI; otherwise ignore them, or delete the folder.
 
-All three typecheck before shipping, and the mobile ones re-sync the shared data layer
-from `src/lib` first, so the phone can never drift from the web app.
+Running one requires the matching secrets under **Settings → Secrets and variables →
+Actions**: `EXPO_TOKEN`, `EAS_PROJECT_ID`, `EXPO_OWNER` for the mobile ones, and
+`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` for the web one.
+
+---
+
+## Troubleshooting
+
+**`The engine "node" is incompatible` / eas-cli won't install** — you're on Node 20 or
+older. Install Node 22.
+
+**`eas: command not found`** — use `npx eas-cli <command>`, or install it globally with
+`npm i -g eas-cli`.
+
+**Build fails on `npm run sync`** — that script copies `src/lib` from the web app into
+`mobile/src/lib/shared`. Run it from inside `mobile/`, with the full repo checked out.
+
+**Update doesn't reach the phone** — updates only apply to a build made *after* the project
+was linked, and only within the same `--branch`. Rebuild once if you linked the project
+after your last APK.

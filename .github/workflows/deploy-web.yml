@@ -1,9 +1,8 @@
 name: Deploy web to Vercel
 
+# Manual only. Kaleida deploys from a laptop by default (see DEPLOY.md); this is
+# here if you ever want the deploy gated behind CI instead.
 on:
-  push:
-    branches: [main, claude/kaleida-social-prototype-8sss0v]
-    paths-ignore: ['mobile/**', '**.md']
   workflow_dispatch:
 
 concurrency:

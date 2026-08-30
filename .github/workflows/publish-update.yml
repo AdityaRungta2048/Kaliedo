@@ -2,10 +2,9 @@ name: Publish mobile update
 
 # Pushes new JavaScript to phones that already have the app installed —
 # no rebuild, no reinstall. Requires an EAS build to exist first.
+# Manual only — the default way to ship an update is `eas update` from your
+# machine. See DEPLOY.md.
 on:
-  push:
-    branches: [main, claude/kaleida-social-prototype-8sss0v]
-    paths: ['mobile/**', 'src/lib/**']
   workflow_dispatch:
 
 jobs:

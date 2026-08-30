@@ -28,27 +28,21 @@ npx expo start --tunnel
 `npm start` runs the shared-code sync first, so prefer it over `npx expo start` after
 pulling changes.
 
-## Put it on Expo so it opens without a dev server
+## Put it on your phone for real
 
 ```bash
-npm install -g eas-cli
-eas login
-eas init                       # links this app to your Expo account
-eas update --branch preview --message "Kaleida prototype"
+npx eas-cli login
+npx eas-cli init
+npx eas-cli build --platform android --profile preview
 ```
 
-That publishes the JS bundle to Expo's servers. Anyone with the link can open it in Expo
-Go — no terminal, no cable. Re-run `eas update` to push a new version.
+Requires **Node 22+**. EAS builds in the cloud and hands you an `.apk` to install — no
+Android Studio, no dev server, no Expo Go. Ship changes afterwards with
+`npx eas-cli update --branch preview -m "what changed"`, which lands on the phone in
+seconds without a rebuild.
 
-## Build a real APK you can install
-
-```bash
-eas build --profile preview --platform android
-```
-
-`preview` is configured in `eas.json` to produce an installable `.apk`. EAS builds it in
-the cloud and gives you a download link. Use `--profile production` for an `.aab` to
-upload to the Play Store.
+Full walkthrough, including the keystore prompt and the web deploy:
+**[../DEPLOY.md](../DEPLOY.md)**.
 
 ---
 
