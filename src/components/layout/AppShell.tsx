@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useApp } from '@/store/AppContext'
 import { useViewer } from '@/store/ViewerContext'
 import { BottomNav, Sidebar } from './Navigation'
@@ -37,17 +37,22 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
         <main className="min-w-0 flex-1 pb-[70px] lg:pb-0">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={location.pathname}
-              initial={reducedMotion ? false : { opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reducedMotion ? undefined : { opacity: 0, y: -4 }}
-              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Outlet />
-            </motion.div>
-          </AnimatePresence>
+          {/*
+            Keyed on the path so each route mounts fresh and plays its entrance.
+            Deliberately not wrapped in AnimatePresence: the exiting child holds
+            an <Outlet />, whose content swaps to the next route mid-exit, so the
+            exit never resolves and the replacement is never mounted — every
+            click-through navigation ends up stuck at opacity 0. A one-way
+            entrance is the whole effect anyway.
+          */}
+          <motion.div
+            key={location.pathname}
+            initial={reducedMotion ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Outlet />
+          </motion.div>
         </main>
       </div>
 
