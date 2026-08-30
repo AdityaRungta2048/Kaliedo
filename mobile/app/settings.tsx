@@ -94,7 +94,7 @@ export default function Settings() {
           <TextRow label="Display name" value={state.displayName} onChange={(v) => dispatch({ type: 'patch', patch: { displayName: v } })} />
           <TextRow label="Username" value={me.handle} prefix="@" editable={false} onChange={() => {}} />
           <TextRow label="Bio" value={state.bio} onChange={(v) => dispatch({ type: 'patch', patch: { bio: v } })} />
-          <Row label="Email" hint="you@kaleida.app" control={<Button label="Change" variant="ghost" size="sm" onPress={() => toast('Verification email sent')} />} />
+          <Row label="Email" hint="you@kaleido.app" control={<Button label="Change" variant="ghost" size="sm" onPress={() => toast('Verification email sent')} />} />
         </Section>
 
         <Section title="Privacy" icon={<Lock size={15} color={c.muted} />}>
@@ -118,7 +118,7 @@ export default function Settings() {
         <Section title="Content" icon={<Tags size={15} color={c.muted} />}>
           <View style={{ paddingHorizontal: 16, paddingVertical: 14 }}>
             <Txt size={14.5} weight="medium">Your interests</Txt>
-            <Txt size={12.5} color={c.muted} style={{ marginTop: 2 }}>These shape what Kaleida calls familiar.</Txt>
+            <Txt size={12.5} color={c.muted} style={{ marginTop: 2 }}>These shape what Kaleido calls familiar.</Txt>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
               {ONBOARDING_TOPICS.map((t) => (
                 <Chip key={t} label={t} active={state.interests.includes(t)} onPress={() => dispatch({ type: 'toggleTopic', topic: t })} />
@@ -179,7 +179,7 @@ export default function Settings() {
         </Section>
 
         <Txt size={12} color={c.faint} center style={{ marginTop: 4 }}>
-          Kaleida · visual prototype · all data is local to this device
+          Kaleido · visual prototype · all data is local to this device
         </Txt>
       </ScrollView>
 

@@ -65,7 +65,7 @@ export default function Discover() {
           What are you curious about?
         </Txt>
         <Txt size={14} color={c.muted} style={{ marginTop: 8, lineHeight: 21 }}>
-          Search the way you would ask a friend. Kaleida reads for meaning, so the words do not have to match.
+          Search the way you would ask a friend. Kaleido reads for meaning, so the words do not have to match.
         </Txt>
 
         <View style={{ marginTop: 18 }}>
@@ -78,7 +78,7 @@ export default function Discover() {
             <TextInput
               value={query} onChangeText={setQuery}
               placeholder="Search people, topics, ideas…" placeholderTextColor={c.faint}
-              accessibilityLabel="Search Kaleida"
+              accessibilityLabel="Search Kaleido"
               style={{ flex: 1, fontSize: 15, color: c.ink }}
               returnKeyType="search"
             />
@@ -116,7 +116,7 @@ export default function Discover() {
               <EmptyState
                 icon={<SearchX size={22} color={c.faint} />}
                 title="We couldn't find that yet"
-                body="Try a different idea — Kaleida works best with a whole thought rather than a keyword."
+                body="Try a different idea — Kaleido works best with a whole thought rather than a keyword."
               />
             ) : (
               <View style={{ gap: 28 }}>
@@ -204,7 +204,7 @@ export default function Discover() {
             <View>
               <SectionTitle>Because you read {seed}</SectionTitle>
               <Txt size={13.5} color={c.muted} style={{ marginBottom: 16, lineHeight: 21 }}>
-                Kaleida walks outward from what you already like, one step at a time. Five steps in, you are somewhere new.
+                Kaleido walks outward from what you already like, one step at a time. Five steps in, you are somewhere new.
               </Txt>
               <View style={{ gap: 8 }}>
                 {chain.map((t, i) => (
@@ -255,7 +255,7 @@ export default function Discover() {
               </View>
             </View>
 
-            <Label>Kaleida prototype · all data is local to this device</Label>
+            <Label>Kaleido prototype · all data is local to this device</Label>
           </Animated.View>
         )}
       </ScrollView>

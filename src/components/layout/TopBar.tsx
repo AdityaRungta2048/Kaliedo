@@ -13,7 +13,7 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-[rgb(var(--k-nav))]/95 backdrop-blur-2xl safe-top lg:hidden">
       <div className="flex h-[54px] items-center gap-2 px-4">
-        <Link to="/" className="flex items-center gap-2.5" aria-label="Kaleida home">
+        <Link to="/" className="flex items-center gap-2.5" aria-label="Kaleido home">
           <LogoMark size={26} />
           <Wordmark className="text-[18px]" />
         </Link>

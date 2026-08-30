@@ -15,7 +15,7 @@ const PALETTES: Record<ArtPalette, { bg: string; ink: string; tones: string[] }>
 
 /**
  * Cover art is drawn, not fetched. It keeps the prototype offline-proof, gives
- * Kaleida a recognisable visual signature, and never shows a broken image.
+ * Kaleido a recognisable visual signature, and never shows a broken image.
  */
 function CoverArtBase({ art, className, rounded = true }: { art: Art; className?: string; rounded?: boolean }) {
   const { seed, motif, palette, ratio } = art

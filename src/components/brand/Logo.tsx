@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { cx } from '@/lib/utils'
 
 /**
- * The Kaleida mark: three facets rotated around a still centre. A kaleidoscope,
+ * The Kaleido mark: three facets rotated around a still centre. A kaleidoscope,
  * reduced to the smallest number of parts that still turns.
  */
 export function LogoMark({ size = 28, className, animate = false }: { size?: number; className?: string; animate?: boolean }) {
@@ -29,7 +29,7 @@ export function LogoMark({ size = 28, className, animate = false }: { size?: num
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={cx('font-display text-[19px] font-semibold tracking-[-0.02em] text-ink', className)}>
-      Kaleida
+      Kaleido
     </span>
   )
 }

@@ -8,7 +8,7 @@ import { cx } from '@/lib/utils'
 
 const PRESS = { scale: 0.96 }
 
-/** Every tappable thing in Kaleida uses the same press physics. */
+/** Every tappable thing in Kaleido uses the same press physics. */
 export const Pressable = forwardRef<HTMLButtonElement, HTMLMotionProps<'button'>>(
   function Pressable({ className, children, ...rest }, ref) {
     return (

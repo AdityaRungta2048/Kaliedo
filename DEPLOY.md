@@ -1,4 +1,4 @@
-# Deploying Kaleida
+# Deploying Kaleido
 
 Everything below runs **from your own machine**. Expo builds the app in its cloud, so you
 don't need Android Studio, a Mac, or a Play Store account — but you trigger it yourself
@@ -21,7 +21,7 @@ npx eas-cli login          # sign up free at expo.dev first
 npx eas-cli init           # creates the Expo project and links this folder
 ```
 
-`eas init` asks you to confirm the project name (`kaleida`) and then writes your project
+`eas init` asks you to confirm the project name (`kaleido`) and then writes your project
 ID into `app.json`. Commit that change — it's how updates find your app later.
 
 ### Build the APK
@@ -49,7 +49,7 @@ When it finishes you get a URL and a QR code. Open either **on your phone**, dow
 `.apk`, and tap it. Android will warn about installing outside the Play Store and ask you
 to allow your browser to install apps — that's expected and you only grant it once.
 
-Kaleida is now a real app on your home screen. No computer, no dev server, no Expo Go.
+Kaleido is now a real app on your home screen. No computer, no dev server, no Expo Go.
 
 ---
 

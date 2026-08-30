@@ -8,7 +8,7 @@ export const ONBOARDING_TOPICS: Topic[] = [
 ]
 
 /**
- * Kaleida's adjacency graph. This is what makes "related" mean something:
+ * Kaleido's adjacency graph. This is what makes "related" mean something:
  * a topic is near another when readers of one tend to be curious about the other.
  */
 export const ADJACENT: Record<Topic, Topic[]> = {
@@ -62,7 +62,7 @@ export function adjacentTo(topics: Topic[]): Set<Topic> {
 }
 
 /**
- * Natural-language terms mapped onto Kaleida's topics. This is what lets a search
+ * Natural-language terms mapped onto Kaleido's topics. This is what lets a search
  * for "best places to travel in winter" surface posts that never use those words.
  */
 export const LEXICON: Record<string, Topic[]> = {

@@ -60,12 +60,12 @@ export default function Onboarding() {
         <Animated.View key={step} entering={SlideInRight.duration(340)} exiting={SlideOutLeft.duration(200)}>
           {step === 0 && (
             <View>
-              <Txt family="display" size={40} style={{ lineHeight: 45, letterSpacing: -1.2 }}>Meet Kaleida.</Txt>
+              <Txt family="display" size={40} style={{ lineHeight: 45, letterSpacing: -1.2 }}>Meet Kaleido.</Txt>
               <Txt family="read" size={18} color={c.muted} style={{ marginTop: 22, lineHeight: 29 }}>
                 A place for people who write. Posts arrive as small blocks — a name, a title, a line or two. Tap one and it expands into the whole piece.
               </Txt>
               <Txt family="read" size={18} color={c.muted} style={{ marginTop: 16, lineHeight: 29 }}>
-                No hashtag games. Kaleida reads for meaning and learns what you are actually curious about.
+                No hashtag games. Kaleido reads for meaning and learns what you are actually curious about.
               </Txt>
             </View>
           )}
@@ -102,7 +102,7 @@ export default function Onboarding() {
             <View>
               <Txt family="display" size={32} style={{ lineHeight: 38, letterSpacing: -0.9 }}>Discover beyond your bubble</Txt>
               <Txt size={15} color={c.muted} style={{ marginTop: 10, lineHeight: 23 }}>
-                Most feeds narrow over time. Kaleida holds a deliberate share open for things you did not ask for.
+                Most feeds narrow over time. Kaleido holds a deliberate share open for things you did not ask for.
               </Txt>
               <View style={{
                 marginTop: 26, padding: 20, borderRadius: RADIUS.lg,
@@ -137,7 +137,7 @@ export default function Onboarding() {
             <Animated.View entering={FadeIn.duration(400)} style={{ alignItems: 'center' }}>
               <LogoMark size={72} colors={{ ink: c.ink }} />
               <Txt family="display" size={34} center style={{ marginTop: 28, lineHeight: 40, letterSpacing: -1 }}>
-                Your Kaleida is ready.
+                Your Kaleido is ready.
               </Txt>
               <Txt size={15.5} color={c.muted} center style={{ marginTop: 14, lineHeight: 24, maxWidth: 300 }}>
                 Built around {state.interests.slice(0, 3).join(', ')}

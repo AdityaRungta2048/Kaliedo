@@ -43,7 +43,7 @@ export type FeedInput = {
 export type FeedItem = { post: Post; relevance: Relevance; fromFollowing: boolean }
 
 /**
- * Kaleida's demo recommender. It is a sampler, not a model: it composes the feed
+ * Kaleido's demo recommender. It is a sampler, not a model: it composes the feed
  * to the ratios you can see (and drag) in the UI, so the philosophy is legible.
  */
 export function buildFeed(input: FeedInput): FeedItem[] {

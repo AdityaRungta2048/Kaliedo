@@ -77,7 +77,7 @@ export function Discover() {
         What are you curious about?
       </h1>
       <p className="mt-2 max-w-[46ch] text-[14.5px] leading-relaxed text-muted">
-        Search the way you would ask a friend. Kaleida reads for meaning, so the words do not have to match.
+        Search the way you would ask a friend. Kaleido reads for meaning, so the words do not have to match.
       </p>
 
       <div className="sticky top-[54px] z-20 -mx-4 mt-5 bg-canvas/92 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:top-0 lg:py-3">
@@ -85,7 +85,7 @@ export function Discover() {
           <Search size={17} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-faint" />
           <input
             ref={inputRef} value={query} onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search people, topics, ideas…" aria-label="Search Kaleida"
+            placeholder="Search people, topics, ideas…" aria-label="Search Kaleido"
             className="h-12 w-full rounded-full border border-line bg-surface pl-11 pr-11 text-[15px] text-ink outline-none transition-colors placeholder:text-faint focus:border-ink/30"
           />
           {query && (
@@ -115,7 +115,7 @@ export function Discover() {
             ) : results.length === 0 && people.length === 0 ? (
               <EmptyState
                 icon={<SearchX size={22} />} title="We couldn't find that yet"
-                body="Try a different idea — Kaleida works best with a whole thought rather than a keyword."
+                body="Try a different idea — Kaleido works best with a whole thought rather than a keyword."
               />
             ) : (
               <div className="space-y-8">
@@ -200,7 +200,7 @@ export function Discover() {
             <section>
               <SectionHeading>Because you read {seed}</SectionHeading>
               <p className="mb-4 max-w-[52ch] text-[13.5px] leading-relaxed text-muted">
-                Kaleida walks outward from what you already like, one step at a time. Each step is still recognisable; five steps in, you are somewhere new.
+                Kaleido walks outward from what you already like, one step at a time. Each step is still recognisable; five steps in, you are somewhere new.
               </p>
               <ol className="relative space-y-2 pl-6">
                 <span className="absolute left-[9px] top-2 bottom-2 w-px bg-line" />

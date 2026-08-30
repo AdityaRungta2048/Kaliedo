@@ -130,7 +130,7 @@ export function AvatarArt({ seed, palette, size }: { seed: number; palette: ArtP
   )
 }
 
-/** The Kaleida mark. Facets at 40° so the rotations stay visible. */
+/** The Kaleido mark. Facets at 40° so the rotations stay visible. */
 export function LogoMark({ size = 28, tile = true, colors }: { size?: number; tile?: boolean; colors?: { ink: string } }) {
   const ink = colors?.ink ?? '#141210'
   return (

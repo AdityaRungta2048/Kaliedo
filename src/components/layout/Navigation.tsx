@@ -27,12 +27,12 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
   return (
     <aside
       className={cx(
-        'sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-line bg-surface transition-[width] duration-300 ease-kaleida lg:flex',
+        'sticky top-0 hidden h-dvh shrink-0 flex-col border-r border-line bg-surface transition-[width] duration-300 ease-kaleido lg:flex',
         collapsed ? 'w-[76px]' : 'w-[248px]',
       )}
     >
       <div className={cx('flex h-[62px] items-center', collapsed ? 'justify-center px-2' : 'gap-2.5 px-5')}>
-        <NavLink to="/" aria-label="Kaleida home" className="flex items-center gap-2.5">
+        <NavLink to="/" aria-label="Kaleido home" className="flex items-center gap-2.5">
           <LogoMark size={28} />
           {!collapsed && <Wordmark />}
         </NavLink>

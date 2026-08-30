@@ -57,13 +57,13 @@ export function Onboarding() {
               {step === 0 && (
                 <div>
                   <h1 className="font-display text-[38px] font-semibold leading-[1.06] tracking-[-0.035em] text-ink sm:text-[52px]">
-                    Meet Kaleida.
+                    Meet Kaleido.
                   </h1>
                   <p className="mt-5 max-w-[38ch] font-read text-[17px] leading-relaxed text-muted sm:text-[19px]">
                     A place for people who write. Posts arrive as small blocks — a name, a title, a line or two. Open one and it expands into the whole piece.
                   </p>
                   <p className="mt-4 max-w-[38ch] font-read text-[17px] leading-relaxed text-muted sm:text-[19px]">
-                    No hashtag games. Kaleida reads for meaning and learns what you are actually curious about.
+                    No hashtag games. Kaleido reads for meaning and learns what you are actually curious about.
                   </p>
                 </div>
               )}
@@ -102,7 +102,7 @@ export function Onboarding() {
                     Discover beyond your bubble
                   </h1>
                   <p className="mt-3 max-w-[40ch] text-[15px] leading-relaxed text-muted">
-                    Most feeds narrow over time. Kaleida holds a deliberate share open for things you did not ask for.
+                    Most feeds narrow over time. Kaleido holds a deliberate share open for things you did not ask for.
                   </p>
                   <div className="mt-7 rounded-2xl border border-line bg-surface p-5">
                     <MixBar mix={{ familiar: 60, related: 25, explore: 15 }} height={11} />
@@ -138,7 +138,7 @@ export function Onboarding() {
                     <LogoMark size={64} />
                   </motion.div>
                   <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.03em] text-ink sm:text-[44px]">
-                    Your Kaleida is ready.
+                    Your Kaleido is ready.
                   </h1>
                   <p className="mx-auto mt-4 max-w-[34ch] text-[15.5px] leading-relaxed text-muted">
                     Built around {state.interests.slice(0, 3).join(', ')}

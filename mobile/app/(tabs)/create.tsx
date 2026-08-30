@@ -130,7 +130,7 @@ export default function Create() {
               <View style={{ height: StyleSheet.hairlineWidth * 2, backgroundColor: c.line, marginVertical: 16 }} />
               <TextInput
                 value={bodyText} onChangeText={setBodyText} multiline accessibilityLabel="Body"
-                placeholder={'Start anywhere. Leave a blank line between paragraphs.\n\nKaleida reads what you write to suggest topics — you can change all of them.'}
+                placeholder={'Start anywhere. Leave a blank line between paragraphs.\n\nKaleido reads what you write to suggest topics — you can change all of them.'}
                 placeholderTextColor={c.faint}
                 style={{ fontFamily: 'Newsreader_400Regular', fontSize: 17, lineHeight: 28, color: c.ink, minHeight: 260, textAlignVertical: 'top' }}
               />
@@ -144,7 +144,7 @@ export default function Create() {
             <View style={{ gap: 22 }}>
               <View>
                 <Txt family="display" size={22} style={{ letterSpacing: -0.4 }}>Topics</Txt>
-                <Txt size={13.5} color={c.muted} style={{ marginTop: 4 }}>Kaleida read your draft and suggested these. Keep what fits.</Txt>
+                <Txt size={13.5} color={c.muted} style={{ marginTop: 4 }}>Kaleido read your draft and suggested these. Keep what fits.</Txt>
               </View>
 
               {suggested.length > 0 && (

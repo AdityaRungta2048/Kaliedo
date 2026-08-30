@@ -7,7 +7,7 @@ import { POSTS } from '@/lib/shared/posts'
 import { CONVERSATIONS, NOTIFICATIONS } from '@/lib/shared/social'
 import { USERS, userById } from '@/lib/shared/users'
 
-const KEY = 'kaleida.state.v1'
+const KEY = 'kaleido.state.v1'
 export const ME_ID = 'u_me'
 
 type Persisted = {

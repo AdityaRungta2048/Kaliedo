@@ -48,7 +48,7 @@ export function Profile({ self = false }: { self?: boolean }) {
               {isMe ? (
                 <>
                   <Button variant="outline" onClick={() => navigate('/settings')}><Settings size={14} /> Edit profile</Button>
-                  <Button variant="ghost" onClick={() => { navigator.clipboard?.writeText(`https://kaleida.app/u/${user.handle}`).catch(() => {}); toast('Profile link copied') }}>
+                  <Button variant="ghost" onClick={() => { navigator.clipboard?.writeText(`https://kaleido.app/u/${user.handle}`).catch(() => {}); toast('Profile link copied') }}>
                     <Share2 size={14} /> Share
                   </Button>
                 </>
@@ -56,7 +56,7 @@ export function Profile({ self = false }: { self?: boolean }) {
                 <>
                   <FollowButton userId={user.id} />
                   <Button variant="outline" onClick={() => { dispatch({ type: 'startConversation', userId: user.id }); navigate('/messages') }}>Message</Button>
-                  <Button variant="ghost" onClick={() => { navigator.clipboard?.writeText(`https://kaleida.app/u/${user.handle}`).catch(() => {}); toast('Profile link copied') }}>
+                  <Button variant="ghost" onClick={() => { navigator.clipboard?.writeText(`https://kaleido.app/u/${user.handle}`).catch(() => {}); toast('Profile link copied') }}>
                     <Share2 size={14} />
                   </Button>
                 </>
@@ -128,7 +128,7 @@ export function Profile({ self = false }: { self?: boolean }) {
         {tab === 'interests' ? (
           <section>
             <p className="mb-4 max-w-[52ch] text-[13.5px] leading-relaxed text-muted">
-              {isMe ? 'What Kaleida uses to compose your feed. Tap to follow or unfollow a topic.' : `What ${user.name.split(' ')[0]} reads and writes about.`}
+              {isMe ? 'What Kaleido uses to compose your feed. Tap to follow or unfollow a topic.' : `What ${user.name.split(' ')[0]} reads and writes about.`}
             </p>
             <div className="flex flex-wrap gap-2">
               {user.interests.map((t) => (

@@ -20,7 +20,7 @@ export function PostMenu({ post, open, onClose }: { post: Post; open: boolean; o
     },
     {
       icon: Link2, label: 'Copy link',
-      run: () => { navigator.clipboard?.writeText(`https://kaleida.app/p/${post.id}`).catch(() => {}); toast('Link copied') },
+      run: () => { navigator.clipboard?.writeText(`https://kaleido.app/p/${post.id}`).catch(() => {}); toast('Link copied') },
     },
     {
       icon: following ? UserMinus : UserPlus, label: following ? `Unfollow ${author.name}` : `Follow ${author.name}`,

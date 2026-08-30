@@ -30,7 +30,7 @@ export default {
         float: '0 30px 80px -24px rgb(var(--k-shadow) / 0.42)',
       },
       maxWidth: { reader: '38rem' },
-      transitionTimingFunction: { kaleida: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+      transitionTimingFunction: { kaleido: 'cubic-bezier(0.22, 1, 0.36, 1)' },
       keyframes: {
         shimmer: { '100%': { transform: 'translateX(100%)' } },
         'fade-up': { from: { opacity: '0', transform: 'translateY(8px)' }, to: { opacity: '1', transform: 'none' } },

@@ -136,8 +136,8 @@ export function Create() {
               <div className="my-4 h-px bg-line" />
               <textarea
                 value={bodyText} onChange={(e) => setBodyText(e.target.value)} rows={12} aria-label="Body"
-                placeholder={'Start anywhere. Leave a blank line between paragraphs.\n\nKaleida reads what you write to suggest topics — you can change all of them.'}
-                className="prose-kaleida w-full resize-none bg-transparent outline-none placeholder:text-faint/60"
+                placeholder={'Start anywhere. Leave a blank line between paragraphs.\n\nKaleido reads what you write to suggest topics — you can change all of them.'}
+                className="prose-kaleido w-full resize-none bg-transparent outline-none placeholder:text-faint/60"
               />
               <p className="mt-2 text-[12px] text-faint">
                 {paragraphs.length} paragraph{paragraphs.length === 1 ? '' : 's'} · {readTime(paragraphs)} min read
@@ -149,7 +149,7 @@ export function Create() {
             <div className="space-y-6">
               <div>
                 <h2 className="font-display text-[22px] font-semibold tracking-[-0.02em] text-ink">Topics</h2>
-                <p className="mt-1 text-[13.5px] text-muted">Kaleida read your draft and suggested these. Keep what fits.</p>
+                <p className="mt-1 text-[13.5px] text-muted">Kaleido read your draft and suggested these. Keep what fits.</p>
               </div>
 
               {suggested.length > 0 && (
@@ -252,7 +252,7 @@ export function Create() {
                   <span className="text-[12.5px] text-faint">· now</span>
                 </div>
                 <h3 className="mt-3 font-display text-[21px] font-semibold leading-tight tracking-[-0.02em] text-ink">{title || 'Untitled'}</h3>
-                <div className="prose-kaleida mt-3 text-[15px]">
+                <div className="prose-kaleido mt-3 text-[15px]">
                   {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
                 </div>
                 {(art || photo) && (

@@ -96,7 +96,7 @@ export function PostReader({ post, onClose, onOpenPost }: { post: Post; onClose:
               {post.title}
             </h1>
 
-            <div className="prose-kaleida mt-6">
+            <div className="prose-kaleido mt-6">
               {post.body.map((para, i) => (
                 <motion.p
                   key={i}

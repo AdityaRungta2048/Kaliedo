@@ -144,7 +144,7 @@ export function ShareSheet({ post, open, onClose }: { post: Post; open: boolean;
 
         <div className="grid grid-cols-2 gap-2">
           {[
-            { icon: Link2, label: 'Copy link', run: () => { navigator.clipboard?.writeText(`https://kaleida.app/p/${post.id}`).catch(() => {}); toast('Link copied') } },
+            { icon: Link2, label: 'Copy link', run: () => { navigator.clipboard?.writeText(`https://kaleido.app/p/${post.id}`).catch(() => {}); toast('Link copied') } },
             { icon: Send, label: 'Send as message', run: () => toast('Opened in messages') },
             { icon: Repeat2, label: 'Repost', run: () => toast('Reposted to your followers') },
             { icon: Share2, label: 'Share outside', run: () => toast('Share sheet opened') },
@@ -256,7 +256,7 @@ export function WhyThisPost({ post, relevance }: { post: Post; relevance: Releva
                 ))}
               </div>
               <p className="text-[12.5px] text-faint">
-                Kaleida matched this on meaning, not hashtags — {copy.label.toLowerCase()} in your current mix.
+                Kaleido matched this on meaning, not hashtags — {copy.label.toLowerCase()} in your current mix.
               </p>
             </div>
           </motion.div>

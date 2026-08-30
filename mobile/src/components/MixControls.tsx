@@ -78,7 +78,7 @@ export function MixControls() {
         style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 }}
       >
         <RotateCcw size={13} color={c.muted} />
-        <Txt size={13} weight="medium" color={c.muted}>Reset to Kaleida's default</Txt>
+        <Txt size={13} weight="medium" color={c.muted}>Reset to Kaleido's default</Txt>
       </Tap>
     </View>
   )

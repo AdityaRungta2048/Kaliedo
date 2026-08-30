@@ -1,7 +1,7 @@
 import type { Post } from './types'
 
 /**
- * Kaleida's seed library. Every entry is written prose — the block shows the
+ * Kaleido's seed library. Every entry is written prose — the block shows the
  * opening, the reader shows the whole thing, and any image comes last.
  */
 export const POSTS: Post[] = [

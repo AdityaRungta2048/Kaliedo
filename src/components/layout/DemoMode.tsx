@@ -10,7 +10,7 @@ import { cx } from '@/lib/utils'
 
 /**
  * Demo mode: every dial that shapes the experience, in one place, for showing
- * Kaleida to someone across a table. Opened with the sidebar button or ⌘K / Ctrl+K.
+ * Kaleido to someone across a table. Opened with the sidebar button or ⌘K / Ctrl+K.
  */
 export function DemoMode() {
   const { demoOpen, setDemoOpen, state, dispatch, toast } = useApp()
@@ -20,7 +20,7 @@ export function DemoMode() {
       <div className="space-y-7 px-5 pb-8">
         <p className="flex items-start gap-2.5 rounded-2xl border border-line bg-canvas p-3.5 text-[13px] leading-relaxed text-muted">
           <Sparkles size={15} className="mt-0.5 shrink-0 text-ember" />
-          Everything here is live. Change a dial and the feed behind this panel recomposes — useful when you are explaining Kaleida to someone.
+          Everything here is live. Change a dial and the feed behind this panel recomposes — useful when you are explaining Kaleido to someone.
         </p>
 
         <section>

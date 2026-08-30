@@ -4,7 +4,7 @@ import { POSTS } from '@/lib/posts'
 import { USERS, ME_ID, userById } from '@/lib/users'
 import { CONVERSATIONS, NOTIFICATIONS } from '@/lib/social'
 
-const STORAGE_KEY = 'kaleida.state.v1'
+const STORAGE_KEY = 'kaleido.state.v1'
 
 type Persisted = {
   onboarded: boolean

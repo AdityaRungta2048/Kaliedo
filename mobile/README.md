@@ -1,6 +1,6 @@
-# Kaleida — mobile
+# Kaleido — mobile
 
-The native Kaleida app: Expo + React Native + TypeScript, sharing its data layer and
+The native Kaleido app: Expo + React Native + TypeScript, sharing its data layer and
 recommendation logic with the web app in the repository root.
 
 Same product, rebuilt for touch. Posts are compact blocks; tapping one measures its
@@ -99,5 +99,5 @@ icon lifts and indicator morphs on select.
 
 ## State
 
-Everything you do is stored on the device with AsyncStorage under `kaleida.state.v1`.
+Everything you do is stored on the device with AsyncStorage under `kaleido.state.v1`.
 **Settings → Reset prototype** clears it.

@@ -13,10 +13,10 @@ export function AppShell() {
   const location = useLocation()
   const { setDemoOpen, reducedMotion } = useApp()
   const { openId, open, close } = useViewer()
-  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('kaleida.sidebar') === 'collapsed')
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('kaleido.sidebar') === 'collapsed')
 
   useEffect(() => {
-    localStorage.setItem('kaleida.sidebar', collapsed ? 'collapsed' : 'expanded')
+    localStorage.setItem('kaleido.sidebar', collapsed ? 'collapsed' : 'expanded')
   }, [collapsed])
 
   // Demo mode is one shortcut away when presenting.

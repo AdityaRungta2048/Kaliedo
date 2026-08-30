@@ -103,11 +103,11 @@
            text-[12px] font-medium text-muted transition-colors;
   }
 
-  .prose-kaleida {
+  .prose-kaleido {
     @apply font-read text-[17px] leading-[1.72] text-ink/90;
   }
-  .prose-kaleida p + p { margin-top: 1.05em; }
-  .prose-kaleida em { @apply italic; }
+  .prose-kaleido p + p { margin-top: 1.05em; }
+  .prose-kaleido em { @apply italic; }
 
   .label-xs { @apply text-[11px] uppercase tracking-[0.14em] font-semibold text-faint; }
 

@@ -1,4 +1,4 @@
-# Kaleida
+# Kaleido
 
 A social platform for people who write.
 
@@ -6,7 +6,7 @@ Posts arrive as **small blocks** — a name, a title, and the first two lines. T
 same card expands in place into the full piece. If the writer attached an image, it appears
 **after** the writing, where they left it.
 
-Underneath is Kaleida's idea: instead of hashtags and follower counts, the feed is composed
+Underneath is Kaleido's idea: instead of hashtags and follower counts, the feed is composed
 from a mix you can see and change — **60% familiar / 25% related / 15% new**, drawn roughly
 **70/30** from people you follow versus writers you have not met.
 
@@ -115,5 +115,5 @@ throughout, and a full `prefers-reduced-motion` path that cuts animation to near
 
 ## State
 
-Everything you do is kept in `localStorage` under `kaleida.state.v1`. **Settings → Reset
+Everything you do is kept in `localStorage` under `kaleido.state.v1`. **Settings → Reset
 prototype** clears it.

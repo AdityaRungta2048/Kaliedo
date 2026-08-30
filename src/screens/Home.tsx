@@ -183,12 +183,12 @@ export function Home() {
           </section>
 
           <p className="px-1 text-[11.5px] leading-relaxed text-faint">
-            Kaleida prototype · press <kbd className="rounded border border-line px-1 py-0.5 font-sans text-[10.5px]">⌘K</kbd> for demo mode
+            Kaleido prototype · press <kbd className="rounded border border-line px-1 py-0.5 font-sans text-[10.5px]">⌘K</kbd> for demo mode
           </p>
         </div>
       </aside>
 
-      <Sheet open={mixOpen} onClose={() => setMixOpen(false)} title="Your Kaleida mix" size="md">
+      <Sheet open={mixOpen} onClose={() => setMixOpen(false)} title="Your Kaleido mix" size="md">
         <div className="px-5 pb-8"><MixControls compactHeader /></div>
       </Sheet>
 

@@ -189,7 +189,7 @@ export function ShareSheet({ post, open, onClose }: { post: Post; open: boolean;
   const people = state.conversations.slice(0, 6).map((cv) => userById(cv.userId))
 
   const actions = [
-    { icon: <Link2 size={16} color={c.muted} />, label: 'Copy link', run: async () => { await Clipboard.setStringAsync(`https://kaleida.app/p/${post.id}`); toast('Link copied') } },
+    { icon: <Link2 size={16} color={c.muted} />, label: 'Copy link', run: async () => { await Clipboard.setStringAsync(`https://kaleido.app/p/${post.id}`); toast('Link copied') } },
     { icon: <Send size={16} color={c.muted} />, label: 'Send as message', run: () => toast('Opened in messages') },
     { icon: <Repeat2 size={16} color={c.muted} />, label: 'Repost', run: () => toast('Reposted to your followers') },
     { icon: <Share2 size={16} color={c.muted} />, label: 'Share outside', run: () => toast('Share sheet opened') },

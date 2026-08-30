@@ -14,7 +14,7 @@ import { Avatar, Chip, Tap, Txt, Verified } from './UI'
 import { LikeButton, SaveButton } from './PostActions'
 
 /**
- * The Kaleida block. Author, title, two lines of the opening, and the shape of
+ * The Kaleido block. Author, title, two lines of the opening, and the shape of
  * what is inside. Tapping it measures its position and hands that to the reader,
  * which grows out of exactly this rectangle.
  */

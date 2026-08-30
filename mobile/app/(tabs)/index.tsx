@@ -70,7 +70,7 @@ export default function Home() {
         paddingHorizontal: 16, paddingBottom: 10,
       }}>
         <LogoMark size={26} colors={{ ink: c.ink }} />
-        <Txt family="display" size={19} style={{ flex: 1, letterSpacing: -0.3 }}>Kaleida</Txt>
+        <Txt family="display" size={19} style={{ flex: 1, letterSpacing: -0.3 }}>Kaleido</Txt>
         <Tap onPress={() => router.push('/discover')} accessibilityLabel="Search" style={{ padding: 8 }}>
           <Search size={20} color={c.muted} />
         </Tap>
@@ -176,7 +176,7 @@ export default function Home() {
         </Animated.View>
       )}
 
-      <Sheet open={mixOpen} onClose={() => setMixOpen(false)} title="Your Kaleida mix">
+      <Sheet open={mixOpen} onClose={() => setMixOpen(false)} title="Your Kaleido mix">
         <View style={{ paddingHorizontal: 18, paddingTop: 4, paddingBottom: 20 }}>
           <Txt size={13.5} color={c.muted} style={{ lineHeight: 21, marginBottom: 18 }}>
             How much of your feed should feel like home, and how much should surprise you. Drag it and the feed rebuilds.

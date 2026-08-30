@@ -186,7 +186,7 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
                     {post.topics.map((t) => <Chip key={t} label={t} small />)}
                   </View>
                   <Txt size={12.5} color={c.faint} style={{ lineHeight: 19 }}>
-                    Kaleida matched this on meaning, not hashtags — {RELEVANCE_COPY[relevance].label.toLowerCase()} in your current mix.
+                    Kaleido matched this on meaning, not hashtags — {RELEVANCE_COPY[relevance].label.toLowerCase()} in your current mix.
                   </Txt>
                 </Animated.View>
               )}

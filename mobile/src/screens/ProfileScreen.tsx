@@ -107,7 +107,7 @@ export function ProfileScreen({ handle, self }: { handle?: string; self?: boolea
               <>
                 <Button label="Edit profile" variant="outline" icon={<SettingsIcon size={14} color={c.ink} />} onPress={() => router.push('/settings')} full />
                 <Button label="Share" variant="ghost" icon={<Share2 size={14} color={c.muted} />}
-                  onPress={async () => { await Clipboard.setStringAsync(`https://kaleida.app/u/${user.handle}`); toast('Profile link copied') }} />
+                  onPress={async () => { await Clipboard.setStringAsync(`https://kaleido.app/u/${user.handle}`); toast('Profile link copied') }} />
               </>
             ) : (
               <>
@@ -132,7 +132,7 @@ export function ProfileScreen({ handle, self }: { handle?: string; self?: boolea
           {tab === 'interests' ? (
             <Animated.View entering={FadeIn.duration(240)}>
               <Txt size={13.5} color={c.muted} style={{ marginBottom: 14, lineHeight: 21 }}>
-                {isMe ? 'What Kaleida uses to compose your feed. Tap to follow or unfollow a topic.' : `What ${user.name.split(' ')[0]} reads and writes about.`}
+                {isMe ? 'What Kaleido uses to compose your feed. Tap to follow or unfollow a topic.' : `What ${user.name.split(' ')[0]} reads and writes about.`}
               </Txt>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {user.interests.map((t) => (

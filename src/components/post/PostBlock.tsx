@@ -19,7 +19,7 @@ const RELEVANCE_TINT: Record<Relevance, string> = {
 }
 
 /**
- * The Kaleida block. Deliberately small: a name, a title, two lines of the
+ * The Kaleido block. Deliberately small: a name, a title, two lines of the
  * opening, and the shape of what is inside. Clicking expands it in place.
  */
 function PostBlockBase({

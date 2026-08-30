@@ -65,7 +65,7 @@ export function Settings() {
         <TextRow label="Display name" value={state.displayName} onChange={(v) => dispatch({ type: 'patch', patch: { displayName: v } })} />
         <TextRow label="Username" value={me.handle} prefix="@" onChange={() => toast('Usernames are fixed in the prototype', 'info')} />
         <TextRow label="Bio" value={state.bio} onChange={(v) => dispatch({ type: 'patch', patch: { bio: v } })} />
-        <Row label="Email" hint="you@kaleida.app" control={<Button variant="ghost" onClick={() => toast('Verification email sent')}><Mail size={14} /> Change</Button>} />
+        <Row label="Email" hint="you@kaleido.app" control={<Button variant="ghost" onClick={() => toast('Verification email sent')}><Mail size={14} /> Change</Button>} />
         <Row label="Password" hint="Last changed 3 months ago" control={<Button variant="ghost" onClick={() => toast('Password reset link sent')}>Update</Button>} />
       </Section>
 
@@ -93,7 +93,7 @@ export function Settings() {
       <Section title="Content" icon={<Tags size={15} />}>
         <div className="px-5 py-4">
           <p className="text-[14.5px] font-medium text-ink">Your interests</p>
-          <p className="mt-0.5 text-[12.5px] text-muted">These shape what Kaleida calls familiar.</p>
+          <p className="mt-0.5 text-[12.5px] text-muted">These shape what Kaleido calls familiar.</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {ONBOARDING_TOPICS.map((t) => (
               <TopicChip key={t} topic={t} active={state.interests.includes(t)} onClick={() => dispatch({ type: 'toggleTopic', topic: t })} />
@@ -136,7 +136,7 @@ export function Settings() {
           onClick={() => { dispatch({ type: 'reset' }); toast('Prototype reset') }} control={<LogOut size={16} className="text-faint" />} />
       </Section>
 
-      <p className="pt-2 text-center text-[12px] text-faint">Kaleida · visual prototype · all data is local to this browser</p>
+      <p className="pt-2 text-center text-[12px] text-faint">Kaleido · visual prototype · all data is local to this browser</p>
 
       <Sheet open={blocked} onClose={() => setBlocked(false)} title="Blocked accounts" size="sm">
         <div className="px-5 pb-8 pt-2 text-center text-[14px] text-muted">

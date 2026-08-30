@@ -38,7 +38,7 @@ export function MixControls({ compactHeader = false }: { compactHeader?: boolean
     <div className="space-y-5">
       {!compactHeader && (
         <div>
-          <h3 className="font-display text-[17px] font-semibold text-ink">Your Kaleida mix</h3>
+          <h3 className="font-display text-[17px] font-semibold text-ink">Your Kaleido mix</h3>
           <p className="mt-1 text-[13.5px] leading-relaxed text-muted">
             How much of your feed should feel like home, and how much should surprise you. Drag it and watch the feed rebuild.
           </p>
@@ -81,7 +81,7 @@ export function MixControls({ compactHeader = false }: { compactHeader?: boolean
         onClick={() => { dispatch({ type: 'patch', patch: { mix: { familiar: 60, related: 25, explore: 15 }, socialFollowing: 70 } }); toast('Mix reset to 60 / 25 / 15') }}
         className="inline-flex items-center gap-2 text-[13px] font-medium text-muted transition-colors hover:text-ink"
       >
-        <RotateCcw size={13} /> Reset to Kaleida's default
+        <RotateCcw size={13} /> Reset to Kaleido's default
       </button>
     </div>
   )
