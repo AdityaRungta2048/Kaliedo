@@ -7,7 +7,8 @@ import * as ImagePicker from 'expo-image-picker'
 import { ArrowLeft, ArrowRight, Check, FileText, ImagePlus, Sparkles, Trash2, VenetianMask, X } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
-import { LEXICON, ONBOARDING_TOPICS, tintFor } from '@/lib/shared/topics'
+import { tintFor } from '@/lib/shared/topics'
+import { classifyTopics } from '@/lib/shared/classify'
 import type { Art, ArtMotif, Post, PostKind } from '@/lib/shared/types'
 import { readTime } from '@/lib/shared/utils'
 import { RADIUS } from '@/theme/tokens'
@@ -22,15 +23,7 @@ const KINDS: { id: PostKind; label: string; blurb: string }[] = [
 ]
 
 const MOTIFS: ArtMotif[] = ['facets', 'strata', 'orbit', 'weave', 'dunes', 'aperture']
-const STEPS = ['Type', 'Write', 'Topics', 'Image', 'Preview']
-
-/** Topics suggested from the writing itself, using the same lexicon the feed uses. */
-function suggestTopics(text: string): string[] {
-  const words = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/)
-  const score = new Map<string, number>()
-  for (const w of words) for (const t of LEXICON[w] ?? []) score.set(t, (score.get(t) ?? 0) + 1)
-  return Array.from(score.entries()).sort((a, b) => b[1] - a[1]).map(([t]) => t).slice(0, 5)
-}
+const STEPS = ['Type', 'Write', 'Image', 'Preview']
 
 export default function Create() {
   const { dispatch, me, toast } = useApp()
@@ -42,19 +35,17 @@ export default function Create() {
   const [kind, setKind] = useState<PostKind>('essay')
   const [title, setTitle] = useState('')
   const [bodyText, setBodyText] = useState('')
-  const [topics, setTopics] = useState<string[]>([])
   const [art, setArt] = useState<Art | null>(null)
   const [photo, setPhoto] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
   const [anonymous, setAnonymous] = useState(false)
 
   const paragraphs = useMemo(() => bodyText.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean), [bodyText])
-  const suggested = useMemo(() => suggestTopics(`${title} ${bodyText}`), [title, bodyText])
+  // Kaleido reads the piece and files it. The writer never picks, so nobody can
+  // buy reach with better tags.
+  const topics = useMemo(() => classifyTopics(title, paragraphs), [title, paragraphs])
 
-  const canAdvance =
-    step === 1 ? title.trim().length > 2 && paragraphs.length > 0
-    : step === 2 ? topics.length > 0
-    : true
+  const canAdvance = step === 1 ? title.trim().length > 2 && paragraphs.length > 0 : true
 
   const pickImage = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -71,13 +62,13 @@ export default function Create() {
       minutesAgo: 0, likes: 0, reposts: 0, comments: [],
       art: photo ? undefined : art ?? undefined,
       photo: photo ?? undefined,
-      concepts: suggestTopics(bodyText),
+      concepts: topics.map((t) => t.toLowerCase()),
       anonymous: anonymous || undefined,
     }
     setTimeout(() => {
       dispatch({ type: 'addPost', post })
       toast(anonymous ? 'Published anonymously' : 'Published to your feed', 'check')
-      setStep(0); setTitle(''); setBodyText(''); setTopics([]); setArt(null); setPhoto(null); setPublishing(false); setAnonymous(false)
+      setStep(0); setTitle(''); setBodyText(''); setArt(null); setPhoto(null); setPublishing(false); setAnonymous(false)
       router.push('/')
     }, 650)
   }
@@ -140,61 +131,32 @@ export default function Create() {
               <Txt size={12} color={c.faint} style={{ marginTop: 10 }}>
                 {paragraphs.length} paragraph{paragraphs.length === 1 ? '' : 's'} · {readTime(paragraphs)} min read
               </Txt>
+
+              {paragraphs.length > 0 && (
+                <Animated.View
+                  entering={FadeIn.duration(280)}
+                  style={{
+                    marginTop: 18, padding: 14, borderRadius: RADIUS.lg, backgroundColor: c.canvas,
+                    borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.line,
+                  }}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                    <Sparkles size={13} color={c.ember} />
+                    <Txt size={12.5} weight="medium">Kaleido is filing this under</Txt>
+                  </View>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 10 }}>
+                    {topics.map((t) => <Chip key={t} label={t} small />)}
+                  </View>
+                  <Txt size={12} color={c.faint} style={{ marginTop: 10, lineHeight: 18 }}>
+                    Topics come from what you wrote, not from tags you choose. Nobody on Kaleido can buy reach with
+                    better hashtags, so keep writing and they will settle.
+                  </Txt>
+                </Animated.View>
+              )}
             </View>
           )}
 
           {step === 2 && (
-            <View style={{ gap: 22 }}>
-              <View>
-                <Txt family="display" size={22} style={{ letterSpacing: -0.4 }}>Topics</Txt>
-                <Txt size={13.5} color={c.muted} style={{ marginTop: 4 }}>Kaleido read your draft and suggested these. Keep what fits.</Txt>
-              </View>
-
-              {suggested.length > 0 && (
-                <View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                    <Sparkles size={11} color={c.ember} /><Label>Suggested from your writing</Label>
-                  </View>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7 }}>
-                    {suggested.map((t) => (
-                      <Chip key={t} label={t} active={topics.includes(t)}
-                        onPress={() => setTopics((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t])} />
-                    ))}
-                  </View>
-                </View>
-              )}
-
-              <View>
-                <Label>All topics</Label>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 10 }}>
-                  {ONBOARDING_TOPICS.map((t) => (
-                    <Chip key={t} label={t} active={topics.includes(t)}
-                      onPress={() => setTopics((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t])} />
-                  ))}
-                </View>
-              </View>
-
-              {topics.length > 0 && (
-                <View style={{ padding: 14, borderRadius: RADIUS.lg, backgroundColor: c.surface, borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.line }}>
-                  <Label>On this piece</Label>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 10 }}>
-                    {topics.map((t) => (
-                      <Tap key={t} onPress={() => setTopics((cur) => cur.filter((x) => x !== t))}
-                        style={{
-                          flexDirection: 'row', alignItems: 'center', gap: 5,
-                          paddingHorizontal: 11, paddingVertical: 6, borderRadius: 999, backgroundColor: c.ink,
-                        }}>
-                        <Txt size={12.5} weight="medium" color={c.onInk}>{t}</Txt>
-                        <X size={11} color={c.onInk} />
-                      </Tap>
-                    ))}
-                  </View>
-                </View>
-              )}
-            </View>
-          )}
-
-          {step === 3 && (
             <View style={{ gap: 18 }}>
               <View>
                 <Txt family="display" size={22} style={{ letterSpacing: -0.4 }}>An image, if you want one</Txt>
@@ -229,7 +191,7 @@ export default function Create() {
             </View>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <View style={{ gap: 14 }}>
               <Txt family="display" size={22} style={{ letterSpacing: -0.4 }}>How it will look</Txt>
               <View style={{
@@ -280,6 +242,7 @@ export default function Create() {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 16 }}>
                   {topics.map((t) => <Chip key={t} label={t} small />)}
                 </View>
+                <Txt size={11.5} color={c.faint} style={{ marginTop: 9 }}>Filed by Kaleido from your writing</Txt>
               </View>
               <Txt size={12.5} color={c.faint} style={{ lineHeight: 19 }}>
                 In the feed this shows as a block: your name, the title, and the first two lines. Readers tap it for the rest.

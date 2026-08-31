@@ -1,13 +1,14 @@
 import { useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Check, FileText, ImagePlus, Plus, Sparkles, Trash2, VenetianMask, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, FileText, ImagePlus, Sparkles, Trash2, VenetianMask } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
-import { LEXICON, ONBOARDING_TOPICS, tintFor } from '@/lib/topics'
+import { tintFor } from '@/lib/topics'
+import { classifyTopics } from '@/lib/classify'
 import type { Art, ArtMotif, Post, PostKind } from '@/lib/types'
 import { cx, readTime } from '@/lib/utils'
 import { CoverArt } from '@/components/brand/CoverArt'
-import { Avatar, Button, Pressable, Switch, TopicChip } from '@/components/ui/Primitives'
+import { Avatar, Button, Pressable, Switch } from '@/components/ui/Primitives'
 import { AvatarArt } from '@/components/brand/CoverArt'
 import { ANON_USER } from '@/lib/identity'
 
@@ -19,17 +20,7 @@ const KINDS: { id: PostKind; label: string; blurb: string }[] = [
 
 const MOTIFS: ArtMotif[] = ['facets', 'strata', 'orbit', 'weave', 'dunes', 'aperture']
 
-/** Topics suggested from the writing itself — the same lexicon the feed uses. */
-function suggestTopics(text: string): string[] {
-  const words = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/)
-  const score = new Map<string, number>()
-  for (const w of words) {
-    for (const t of LEXICON[w] ?? []) score.set(t, (score.get(t) ?? 0) + 1)
-  }
-  return Array.from(score.entries()).sort((a, b) => b[1] - a[1]).map(([t]) => t).slice(0, 5)
-}
-
-const STEPS = ['Type', 'Write', 'Topics', 'Image', 'Preview']
+const STEPS = ['Type', 'Write', 'Image', 'Preview']
 
 export function Create() {
   const { dispatch, me, toast } = useApp()
@@ -39,8 +30,6 @@ export function Create() {
   const [kind, setKind] = useState<PostKind>('essay')
   const [title, setTitle] = useState('')
   const [bodyText, setBodyText] = useState('')
-  const [topics, setTopics] = useState<string[]>([])
-  const [customTopic, setCustomTopic] = useState('')
   const [art, setArt] = useState<Art | null>(null)
   const [photo, setPhoto] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
@@ -48,15 +37,14 @@ export function Create() {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const paragraphs = useMemo(() => bodyText.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean), [bodyText])
-  const suggested = useMemo(() => suggestTopics(`${title} ${bodyText}`), [title, bodyText])
+  // Kaleido reads the piece and files it. The writer never picks, so nobody can
+  // buy reach with better tags.
+  const topics = useMemo(() => classifyTopics(title, paragraphs), [title, paragraphs])
 
   const go = (next: number) => { setDir(next > step ? 1 : -1); setStep(next) }
 
   const canAdvance =
-    step === 0 ? true :
-    step === 1 ? title.trim().length > 2 && paragraphs.length > 0 :
-    step === 2 ? topics.length > 0 :
-    true
+    step === 1 ? title.trim().length > 2 && paragraphs.length > 0 : true
 
   const publish = () => {
     setPublishing(true)
@@ -66,7 +54,7 @@ export function Create() {
       body: paragraphs, topics, minutesAgo: 0, likes: 0, reposts: 0, comments: [],
       art: photo ? undefined : art ?? undefined,
       photo: photo ?? undefined,
-      concepts: suggestTopics(bodyText),
+      concepts: topics.map((t) => t.toLowerCase()),
       anonymous: anonymous || undefined,
     }
     window.setTimeout(() => {
@@ -146,75 +134,32 @@ export function Create() {
               <p className="mt-2 text-[12px] text-faint">
                 {paragraphs.length} paragraph{paragraphs.length === 1 ? '' : 's'} · {readTime(paragraphs)} min read
               </p>
+
+              {paragraphs.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                  className="mt-5 rounded-2xl border border-line bg-canvas p-4"
+                >
+                  <p className="flex items-center gap-2 text-[12.5px] font-medium text-ink">
+                    <Sparkles size={13} className="text-ember" /> Kaleido is filing this under
+                  </p>
+                  <div className="mt-2.5 flex flex-wrap gap-1.5">
+                    {topics.map((t) => (
+                      <motion.span key={t} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="chip">
+                        {t}
+                      </motion.span>
+                    ))}
+                  </div>
+                  <p className="mt-2.5 text-[12px] leading-relaxed text-faint">
+                    Topics come from what you wrote, not from tags you choose. Nobody on Kaleido can buy reach with
+                    better hashtags, so keep writing and they will settle.
+                  </p>
+                </motion.div>
+              )}
             </div>
           )}
 
           {step === 2 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="font-display text-[22px] font-semibold tracking-[-0.02em] text-ink">Topics</h2>
-                <p className="mt-1 text-[13.5px] text-muted">Kaleido read your draft and suggested these. Keep what fits.</p>
-              </div>
-
-              {suggested.length > 0 && (
-                <section>
-                  <p className="label-xs mb-2 flex items-center gap-1.5"><Sparkles size={11} className="text-ember" /> Suggested from your writing</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {suggested.map((t) => (
-                      <TopicChip key={t} topic={t} active={topics.includes(t)}
-                        onClick={() => setTopics((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t])} />
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              <section>
-                <p className="label-xs mb-2">All topics</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {ONBOARDING_TOPICS.map((t) => (
-                    <TopicChip key={t} topic={t} active={topics.includes(t)}
-                      onClick={() => setTopics((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t])} />
-                  ))}
-                </div>
-              </section>
-
-              <section>
-                <p className="label-xs mb-2">Add your own</p>
-                <div className="flex gap-2">
-                  <input
-                    value={customTopic} onChange={(e) => setCustomTopic(e.target.value)} placeholder="e.g. Bookbinding" aria-label="Custom topic"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && customTopic.trim()) {
-                        setTopics((c) => [...new Set([...c, customTopic.trim()])]); setCustomTopic('')
-                      }
-                    }}
-                    className="h-10 flex-1 rounded-xl border border-line bg-surface px-3.5 text-[14px] text-ink outline-none placeholder:text-faint focus:border-ink/30"
-                  />
-                  <Button variant="outline" onClick={() => { if (customTopic.trim()) { setTopics((c) => [...new Set([...c, customTopic.trim()])]); setCustomTopic('') } }}>
-                    <Plus size={14} /> Add
-                  </Button>
-                </div>
-              </section>
-
-              {topics.length > 0 && (
-                <section className="rounded-2xl border border-line bg-surface p-4">
-                  <p className="label-xs mb-2">On this piece</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {topics.map((t) => (
-                      <span key={t} className="chip border-ink bg-ink text-canvas">
-                        {t}
-                        <button onClick={() => setTopics((c) => c.filter((x) => x !== t))} aria-label={`Remove ${t}`} className="ml-0.5">
-                          <X size={11} />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </section>
-              )}
-            </div>
-          )}
-
-          {step === 3 && (
             <div className="space-y-5">
               <div>
                 <h2 className="font-display text-[22px] font-semibold tracking-[-0.02em] text-ink">An image, if you want one</h2>
@@ -245,7 +190,7 @@ export function Create() {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <div className="space-y-4">
               <h2 className="font-display text-[22px] font-semibold tracking-[-0.02em] text-ink">How it will look</h2>
 
@@ -297,6 +242,7 @@ export function Create() {
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {topics.map((t) => <span key={t} className="chip">{t}</span>)}
                 </div>
+                <p className="mt-2.5 text-[11.5px] text-faint">Filed by Kaleido from your writing</p>
               </article>
 
               <p className="text-[12.5px] text-faint">

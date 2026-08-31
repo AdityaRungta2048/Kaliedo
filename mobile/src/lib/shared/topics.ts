@@ -66,6 +66,34 @@ export function adjacentTo(topics: Topic[]): Set<Topic> {
  * for "best places to travel in winter" surface posts that never use those words.
  */
 export const LEXICON: Record<string, Topic[]> = {
+  // Work, hiring and company life
+  hiring: ['Startups', 'Business'], hire: ['Startups', 'Business'], interview: ['Business', 'Psychology'],
+  interviews: ['Business', 'Psychology'], candidate: ['Business'], team: ['Business', 'Startups'],
+  teams: ['Business', 'Startups'], colleague: ['Business'], career: ['Business'], job: ['Business'],
+  raised: ['Startups', 'Business'], valuation: ['Startups', 'Business'], round: ['Startups'],
+  investor: ['Startups', 'Business'], economics: ['Business'], moat: ['Startups', 'Business'],
+  studio: ['Gaming', 'Design'], studios: ['Gaming', 'Design'], indie: ['Gaming', 'Culture'],
+  greenlight: ['Gaming', 'Film'], playtesting: ['Gaming', 'Design'], player: ['Gaming'], players: ['Gaming'],
+
+  // Type and making
+  letter: ['Design', 'Craft'], letters: ['Design', 'Craft'], alphabet: ['Design'], lowercase: ['Design'],
+  typeface: ['Design'], glyph: ['Design'], kerning: ['Design'], serif: ['Design'], tracking: ['Design'],
+  drew: ['Design', 'Craft'], redrew: ['Design', 'Craft'], drawing: ['Design', 'Craft'],
+  tailor: ['Fashion', 'Craft'], tailoring: ['Fashion', 'Craft'], sleeve: ['Fashion'], garment: ['Fashion'],
+  fabric: ['Fashion', 'Craft'], sew: ['Craft', 'Fashion'], stitch: ['Craft', 'Fashion'], fit: ['Fashion'],
+  showroom: ['Fashion', 'Business'], coat: ['Fashion'], coats: ['Fashion'],
+
+  // Research and measurement
+  benchmark: ['Research', 'AI'], benchmarks: ['Research', 'AI'], metric: ['Research', 'Science'],
+  metrics: ['Research', 'Science'], score: ['Research'], retrieval: ['AI', 'Research'],
+  evaluation: ['Research', 'AI'], optimise: ['Research', 'Programming'], optimize: ['Research', 'Programming'],
+  system: ['Technology', 'Programming'], systems: ['Technology', 'Programming'],
+  embeddings: ['AI', 'Programming'], dataset: ['AI', 'Science'],
+
+  // Kitchens, service, bodies
+  kitchen: ['Food', 'Craft'], restaurant: ['Food', 'Culture'], chef: ['Food', 'Craft'],
+  dough: ['Food', 'Craft'], baking: ['Food', 'Craft'], salt: ['Food'], onions: ['Food'], pan: ['Food'],
+  injury: ['Fitness', 'Health'], marathon: ['Fitness'], trail: ['Fitness', 'Nature'],
   travel: ['Travel'], trip: ['Travel'], places: ['Travel'], destination: ['Travel'],
   wander: ['Travel'], abroad: ['Travel'], city: ['Travel', 'Culture'], road: ['Travel'],
   winter: ['Travel', 'Nature'], snow: ['Nature', 'Travel'], cold: ['Nature'],
@@ -85,12 +113,12 @@ export const LEXICON: Record<string, Topic[]> = {
   light: ['Photography'], film: ['Film', 'Photography'], lens: ['Photography'], portrait: ['Photography'],
   design: ['Design'], typography: ['Design'], interface: ['Design', 'Technology'], ux: ['Design'],
   music: ['Music'], song: ['Music'], album: ['Music'], sound: ['Music'], listen: ['Music'],
-  food: ['Food'], cook: ['Food'], cooking: ['Food'], recipe: ['Food'], kitchen: ['Food'], bread: ['Food'],
+  food: ['Food'], cook: ['Food'], cooking: ['Food'], recipe: ['Food'], bread: ['Food'],
   fitness: ['Fitness'], run: ['Fitness'], running: ['Fitness'], training: ['Fitness'], strength: ['Fitness'],
   sleep: ['Health'], health: ['Health'], habit: ['Health', 'Psychology'], habits: ['Health', 'Psychology'],
   focus: ['Psychology', 'Writing'], attention: ['Psychology'], mind: ['Psychology', 'Philosophy'],
   meaning: ['Philosophy'], philosophy: ['Philosophy'], think: ['Philosophy'], thinking: ['Philosophy'],
-  game: ['Gaming'], games: ['Gaming'], gaming: ['Gaming'], player: ['Gaming'],
+  game: ['Gaming'], games: ['Gaming'], gaming: ['Gaming'],
   fashion: ['Fashion'], style: ['Fashion', 'Design'], clothes: ['Fashion'], wardrobe: ['Fashion'],
   science: ['Science'], research: ['Research', 'Science'], paper: ['Research'], data: ['Science', 'AI'],
   craft: ['Craft'], making: ['Craft'], hands: ['Craft'], workshop: ['Craft'],
