@@ -8,7 +8,7 @@ import { RELEVANCE_COPY } from '@/lib/recommend'
 import { compact, cx, timeAgo } from '@/lib/utils'
 import { Avatar, Pressable } from '@/components/ui/Primitives'
 import { Sheet } from '@/components/ui/Overlay'
-import { EASE, T_SLOW } from '@/lib/motion'
+import { EASE, T_BASE, T_SLOW } from '@/lib/motion'
 
 /** The burst is eight short strokes — a spark, not confetti. */
 function Burst({ show }: { show: boolean }) {
@@ -203,7 +203,7 @@ export function CommentSheet({ post, open, onClose }: { post: Post; open: boolea
               {live.comments.map((c) => {
                 const u = userById(c.authorId)
                 return (
-                  <motion.li key={c.id} layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3">
+                  <motion.li key={c.id} layout transition={T_BASE} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3">
                     <Avatar user={u} size={32} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline gap-2">

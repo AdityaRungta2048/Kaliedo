@@ -11,6 +11,7 @@ import { CoverArt } from '@/components/brand/CoverArt'
 import { Avatar, Button, Pressable, Switch } from '@/components/ui/Primitives'
 import { AvatarArt } from '@/components/brand/CoverArt'
 import { ANON_USER } from '@/lib/identity'
+import { T_BASE } from '@/lib/motion'
 
 const KINDS: { id: PostKind; label: string; blurb: string }[] = [
   { id: 'essay', label: 'Essay', blurb: 'Something with a beginning and an end' },
@@ -145,7 +146,7 @@ export function Create() {
                   </p>
                   <div className="mt-2.5 flex flex-wrap gap-1.5">
                     {topics.map((t) => (
-                      <motion.span key={t} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="chip">
+                      <motion.span key={t} layout transition={T_BASE} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="chip">
                         {t}
                       </motion.span>
                     ))}
