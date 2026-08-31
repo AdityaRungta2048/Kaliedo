@@ -1,13 +1,18 @@
 import { motion } from 'framer-motion'
-import type { FeedMode } from '@/lib/types'
+import type { ExploreTab, FeedMode } from '@/lib/types'
 import { cx } from '@/lib/utils'
 
 export const FEED_MODES: { id: FeedMode; label: string; blurb: string }[] = [
   { id: 'for-you', label: 'For you', blurb: 'Composed from your mix' },
   { id: 'following', label: 'Following', blurb: 'Only people you follow' },
-  { id: 'explore', label: 'Explore', blurb: 'Mostly writers you don’t follow yet' },
-  { id: 'nearby', label: 'Next door', blurb: 'One step outside your interests' },
+  { id: 'explore', label: 'Explore', blurb: 'Beyond the people you already read' },
   { id: 'unsigned', label: 'Unsigned', blurb: 'Written without a name' },
+]
+
+/** Explore's inner scope, the way Reels splits discovery from the people you follow. */
+export const EXPLORE_TABS: { id: ExploreTab; label: string; blurb: string }[] = [
+  { id: 'nearby', label: 'Next door', blurb: 'Writers you don’t follow, nearest interests first' },
+  { id: 'following', label: 'Following', blurb: 'Discovery narrowed to people you read' },
 ]
 
 export function FeedSwitcher({ mode, onChange }: { mode: FeedMode; onChange: (m: FeedMode) => void }) {

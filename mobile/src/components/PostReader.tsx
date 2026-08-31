@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router'
 import { ArrowLeft, ChevronDown, Sparkles, TrendingUp, VenetianMask } from 'lucide-react-native'
 import type { Post } from '@/lib/shared/types'
 import { userById } from '@/lib/shared/users'
-import { anonPersona, canReveal, displayAuthor, hasBigReach, isAnonymous } from '@/lib/shared/identity'
+import { canReveal, displayAuthor, hasBigReach, isAnonymous } from '@/lib/shared/identity'
 import { relevanceOf, RELEVANCE_COPY } from '@/lib/shared/recommend'
 import { excerpt, readTime, timeAgo } from '@/lib/shared/utils'
 import { useApp } from '@/store/AppContext'
@@ -182,9 +182,10 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
                 <View style={{ flexDirection: 'row', gap: 10 }}>
                   <VenetianMask size={16} color={c.muted} style={{ marginTop: 2 }} />
                   <View style={{ flex: 1 }}>
-                    <Txt size={13} weight="medium">Published as {anonPersona(post.authorId).name}</Txt>
+                    <Txt size={13} weight="medium">Published as Anonymous</Txt>
                     <Txt size={12.5} color={c.muted} style={{ marginTop: 4, lineHeight: 19 }}>
-                      Only you know this is yours. You can put your real name on it whenever you like — but not the other way round.
+                      Only you know this is yours. You can put your real name on it whenever you like — but not the other
+                      way round, and claiming this one says nothing about anything else you posted anonymously.
                     </Txt>
                     {hasBigReach(post, state.likes.includes(post.id) ? 1 : 0) && (
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 9 }}>

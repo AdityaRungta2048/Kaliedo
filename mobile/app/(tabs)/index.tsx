@@ -7,7 +7,7 @@ import { Crosshair, Inbox, Mail, Search, SlidersHorizontal, X } from 'lucide-rea
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { buildFeed, type FeedItem } from '@/lib/shared/recommend'
-import type { FeedMode } from '@/lib/shared/types'
+import type { ExploreTab, FeedMode } from '@/lib/shared/types'
 import { RADIUS } from '@/theme/tokens'
 import { PostBlock, PostBlockSkeletonList } from '@/components/PostBlock'
 import { MixBar, MixControls } from '@/components/MixControls'
@@ -19,9 +19,14 @@ import { LogoMark } from '@/components/Art'
 const MODES: { id: FeedMode; label: string; blurb: string }[] = [
   { id: 'for-you', label: 'For you', blurb: 'Composed from your mix' },
   { id: 'following', label: 'Following', blurb: 'Only people you follow' },
-  { id: 'explore', label: 'Explore', blurb: 'Writers you don’t follow yet' },
-  { id: 'nearby', label: 'Next door', blurb: 'One step outside your interests' },
+  { id: 'explore', label: 'Explore', blurb: 'Beyond the people you already read' },
   { id: 'unsigned', label: 'Unsigned', blurb: 'Written without a name' },
+]
+
+/** Explore's inner scope, the way Reels splits discovery from people you follow. */
+const EXPLORE_TABS: { id: ExploreTab; label: string; blurb: string }[] = [
+  { id: 'nearby', label: 'Next door', blurb: 'Writers you don’t follow, nearest interests first' },
+  { id: 'following', label: 'Following', blurb: 'Discovery narrowed to people you read' },
 ]
 
 export default function Home() {
@@ -46,20 +51,21 @@ export default function Home() {
       interests: state.interests,
       following: new Set(state.following),
       mode: state.feedMode,
+      exploreTab: state.exploreTab,
       mix: state.mix,
       socialFollowing: state.socialFollowing,
       seed: state.feedSeed,
       mutedTopics: new Set(state.mutedTopics),
       focusNiche: focused ? state.alterEgo!.niche : null,
     }),
-    [state.posts, state.interests, state.following, state.feedMode, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics, focused, state.alterEgo],
+    [state.posts, state.interests, state.following, state.feedMode, state.exploreTab, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics, focused, state.alterEgo],
   )
 
   useEffect(() => {
     setLoading(true)
     const t = setTimeout(() => { setLoading(false); first.current = false }, first.current ? 520 : 240)
     return () => clearTimeout(t)
-  }, [state.feedMode, state.feedSeed])
+  }, [state.feedMode, state.exploreTab, state.feedSeed])
 
   const changeMode = (m: FeedMode) => {
     if (m === state.feedMode) return
@@ -150,12 +156,32 @@ export default function Home() {
       </View>
       )}
 
+      {!focused && state.feedMode === 'explore' && (
+        <View style={{
+          flexDirection: 'row', gap: 3, alignSelf: 'flex-start', marginLeft: 16, marginBottom: 10,
+          padding: 3, borderRadius: 999, borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.line,
+        }}>
+          {EXPLORE_TABS.map((tab) => {
+            const active = state.exploreTab === tab.id
+            return (
+              <Tap
+                key={tab.id} onPress={() => dispatch({ type: 'setExploreTab', tab: tab.id })} scaleTo={0.94}
+                accessibilityRole="tab" accessibilityState={{ selected: active }}
+                style={{ paddingHorizontal: 13, paddingVertical: 6, borderRadius: 999, backgroundColor: active ? c.ink : 'transparent' }}
+              >
+                <Txt size={12.5} weight={active ? 'semi' : 'medium'} color={active ? c.onInk : c.muted}>{tab.label}</Txt>
+              </Tap>
+            )
+          })}
+        </View>
+      )}
+
       {loading ? (
         <Animated.View exiting={FadeOut.duration(160)} style={{ paddingHorizontal: 16 }}>
           <PostBlockSkeletonList count={4} />
         </Animated.View>
       ) : (
-        <Animated.View key={`${state.feedMode}-${state.feedSeed}`} entering={FadeIn.duration(240)} style={{ flex: 1 }}>
+        <Animated.View key={`${state.feedMode}-${state.exploreTab}-${state.feedSeed}`} entering={FadeIn.duration(240)} style={{ flex: 1 }}>
           <FlatList
             ref={listRef}
             data={feed}
@@ -173,7 +199,9 @@ export default function Home() {
               <Txt size={12} color={c.faint} style={{ marginBottom: 12 }}>
                 {focused
                   ? `Nothing outside ${state.alterEgo!.niche} reaches this feed · ${feed.length} pieces`
-                  : `${activeMode?.blurb ?? ''} · ${feed.length} pieces`}
+                  : state.feedMode === 'explore'
+                    ? `${EXPLORE_TABS.find((t) => t.id === state.exploreTab)?.blurb} · ${feed.length} pieces`
+                    : `${activeMode?.blurb ?? ''} · ${feed.length} pieces`}
               </Txt>
             }
             ListEmptyComponent={

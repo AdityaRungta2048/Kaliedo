@@ -10,7 +10,7 @@ import { ADJACENT } from '@/lib/topics'
 import { useIsDesktop } from '@/lib/useMediaQuery'
 import { compact, cx } from '@/lib/utils'
 import { BlockGrid, BlockGridSkeleton } from '@/components/feed/BlockGrid'
-import { FEED_MODES, FeedSwitcher } from '@/components/feed/FeedSwitcher'
+import { EXPLORE_TABS, FEED_MODES, FeedSwitcher } from '@/components/feed/FeedSwitcher'
 import { MixBar, MixControls } from '@/components/feed/MixControls'
 import { Sheet } from '@/components/ui/Overlay'
 import { Avatar, Button, EmptyState, Pressable, SectionHeading, TopicChip, VerifiedMark } from '@/components/ui/Primitives'
@@ -36,13 +36,14 @@ export function Home() {
       interests: state.interests,
       following: new Set(state.following),
       mode: state.feedMode,
+      exploreTab: state.exploreTab,
       mix: state.mix,
       socialFollowing: state.socialFollowing,
       seed: state.feedSeed,
       mutedTopics: new Set(state.mutedTopics),
       focusNiche: focused ? state.alterEgo!.niche : null,
     }),
-    [state.posts, state.interests, state.following, state.feedMode, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics, focused, state.alterEgo],
+    [state.posts, state.interests, state.following, state.feedMode, state.exploreTab, state.mix, state.socialFollowing, state.feedSeed, state.mutedTopics, focused, state.alterEgo],
   )
 
   // A short, honest skeleton on first paint and whenever the feed re-composes.
@@ -50,7 +51,7 @@ export function Home() {
     setLoading(true)
     const t = window.setTimeout(() => { setLoading(false); firstLoad.current = false }, firstLoad.current ? 620 : 260)
     return () => window.clearTimeout(t)
-  }, [state.feedMode, state.feedSeed])
+  }, [state.feedMode, state.exploreTab, state.feedSeed])
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 900)
@@ -99,14 +100,38 @@ export function Home() {
             </Pressable>
           </div>
           )}
+          {!focused && state.feedMode === 'explore' && (
+            <div role="tablist" aria-label="Explore scope" className="mt-2.5 flex w-fit gap-0.5 rounded-full border border-line p-0.5">
+              {EXPLORE_TABS.map((tab) => {
+                const active = state.exploreTab === tab.id
+                return (
+                  <button
+                    key={tab.id} role="tab" aria-selected={active}
+                    onClick={() => dispatch({ type: 'setExploreTab', tab: tab.id })}
+                    className={cx('relative rounded-full px-3.5 py-1 text-[12.5px] font-medium transition-colors',
+                      active ? 'text-canvas' : 'text-muted hover:text-ink')}
+                  >
+                    {active && (
+                      <motion.span layoutId="explore-scope" className="absolute inset-0 rounded-full bg-ink"
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }} />
+                    )}
+                    <span className="relative">{tab.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
             <motion.p
-              key={focused ? 'focused' : activeMode?.id} initial={{ opacity: 0, y: -3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              key={focused ? 'focused' : `${activeMode?.id}-${state.exploreTab}`} initial={{ opacity: 0, y: -3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }} className="mt-2 text-[12px] text-faint"
             >
               {focused
                 ? `Nothing outside ${state.alterEgo!.niche} reaches this feed · ${feed.length} pieces`
-                : `${activeMode?.blurb ?? ''} · ${feed.length} pieces`}
+                : state.feedMode === 'explore'
+                  ? `${EXPLORE_TABS.find((t) => t.id === state.exploreTab)?.blurb} · ${feed.length} pieces`
+                  : `${activeMode?.blurb ?? ''} · ${feed.length} pieces`}
             </motion.p>
           </AnimatePresence>
         </div>
@@ -146,8 +171,8 @@ export function Home() {
               </motion.div>
             ) : (
               <BlockGrid
-                key={`${state.feedMode}-${state.feedSeed}`}
-                transitionKey={`${state.feedMode}-${state.feedSeed}`}
+                key={`${state.feedMode}-${state.exploreTab}-${state.feedSeed}`}
+                transitionKey={`${state.feedMode}-${state.exploreTab}-${state.feedSeed}`}
                 items={feed} openId={openId} onOpen={open}
               />
             )}

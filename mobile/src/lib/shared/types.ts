@@ -80,7 +80,10 @@ export type Identity = 'main' | 'alter'
 
 export type Relevance = 'familiar' | 'related' | 'explore'
 
-export type FeedMode = 'for-you' | 'following' | 'explore' | 'nearby' | 'unsigned'
+export type FeedMode = 'for-you' | 'following' | 'explore' | 'unsigned'
+
+/** Explore's inner scope: discovery beyond your circle, or the people in it. */
+export type ExploreTab = 'nearby' | 'following'
 
 export type Mix = { familiar: number; related: number; explore: number }
 

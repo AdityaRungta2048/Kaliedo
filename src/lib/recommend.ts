@@ -1,4 +1,4 @@
-import type { FeedMode, Mix, Post, Relevance, Topic } from './types'
+import type { ExploreTab, FeedMode, Mix, Post, Relevance, Topic } from './types'
 import { ADJACENT } from './topics'
 
 /** Where a post sits relative to what you already care about. */
@@ -33,6 +33,8 @@ export type FeedInput = {
   interests: Topic[]
   following: Set<string>
   mode: FeedMode
+  /** Which half of Explore is showing. Ignored by every other mode. */
+  exploreTab?: ExploreTab
   mix: Mix
   /** Share of the feed drawn from accounts you follow. */
   socialFollowing: number
@@ -65,7 +67,10 @@ export function buildFeed(input: FeedInput): FeedItem[] {
   const tagged: FeedItem[] = eligible.map((p) => ({
     post: p,
     relevance: relevanceOf(p, interests),
-    fromFollowing: following.has(p.authorId),
+    // An anonymous post is never "from someone you follow", even when it is.
+    // Surfacing one in a followed-only view would tell the reader its author is
+    // one of the few people they follow, which is most of the way to a name.
+    fromFollowing: !p.anonymous && following.has(p.authorId),
   }))
 
   if (focusNiche) {
@@ -78,14 +83,22 @@ export function buildFeed(input: FeedInput): FeedItem[] {
     return seededOrder(tagged.filter((i) => i.fromFollowing), seed)
   }
   if (mode === 'explore') {
+    // Explore's "Following" half is the same discovery surface narrowed to the
+    // people you already read — the Reels split, not a second Following feed.
+    if (input.exploreTab === 'following') {
+      return seededOrder(tagged.filter((i) => i.fromFollowing), seed)
+    }
+    // "Next door" absorbed the old standalone tab: everything outside your
+    // circle, with adjacent interests first and the genuine detours after.
     const notFollowed = tagged.filter((i) => !i.fromFollowing)
-    const rest = tagged.filter((i) => i.fromFollowing)
-    return [...seededOrder(notFollowed, seed), ...seededOrder(rest, seed + 1)]
-  }
-  if (mode === 'nearby') {
-    const near = tagged.filter((i) => i.relevance === 'related')
-    const outer = tagged.filter((i) => i.relevance === 'explore')
-    return [...seededOrder(near, seed), ...seededOrder(outer, seed + 2)]
+    const near = notFollowed.filter((i) => i.relevance === 'related')
+    const outer = notFollowed.filter((i) => i.relevance === 'explore')
+    const familiar = notFollowed.filter((i) => i.relevance === 'familiar')
+    return [
+      ...seededOrder(near, seed),
+      ...seededOrder(outer, seed + 2),
+      ...seededOrder(familiar, seed + 3),
+    ]
   }
 
   // For You: interleave by the mix, honouring the following/discovery split.

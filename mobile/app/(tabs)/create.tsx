@@ -12,7 +12,7 @@ import type { Art, ArtMotif, Post, PostKind } from '@/lib/shared/types'
 import { readTime } from '@/lib/shared/utils'
 import { RADIUS } from '@/theme/tokens'
 import { AvatarArt, CoverArt } from '@/components/Art'
-import { anonPersona } from '@/lib/shared/identity'
+import { ANON_USER } from '@/lib/shared/identity'
 import { Avatar, Button, Chip, Label, Switch, Tap, Txt } from '@/components/UI'
 
 const KINDS: { id: PostKind; label: string; blurb: string }[] = [
@@ -47,7 +47,6 @@ export default function Create() {
   const [photo, setPhoto] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
   const [anonymous, setAnonymous] = useState(false)
-  const persona = useMemo(() => anonPersona(me.id), [me.id])
 
   const paragraphs = useMemo(() => bodyText.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean), [bodyText])
   const suggested = useMemo(() => suggestTopics(`${title} ${bodyText}`), [title, bodyText])
@@ -245,15 +244,9 @@ export default function Create() {
                   </View>
                   <Txt size={12.5} color={c.muted} style={{ marginTop: 5, lineHeight: 19 }}>
                     {anonymous
-                      ? `This publishes as ${persona.name}, the handle all your anonymous writing shares. It still earns reach and replies, and appears in the normal feed alongside everything else. You can put your real name on it later — but a signed post can never be made anonymous.`
+                      ? 'This publishes as Anonymous — the same name every anonymous post carries, so nothing links this piece to anything else you have written. It still earns reach and replies, and appears in the normal feed alongside everything else. You can put your real name on it later; a signed post can never be made anonymous.'
                       : 'Your name will appear on this piece. Turn this on if you would rather it stood on its own.'}
                   </Txt>
-                  {anonymous && (
-                    <Txt size={12} color={c.faint} style={{ marginTop: 7, lineHeight: 18 }}>
-                      Worth knowing: because the handle is the same every time, someone reading enough of your
-                      anonymous work on one subject could guess who you are.
-                    </Txt>
-                  )}
                 </View>
               </View>
 
@@ -262,10 +255,10 @@ export default function Create() {
                   {anonymous ? (
                     <>
                       <View style={{ width: 30, height: 30, borderRadius: 15, overflow: 'hidden' }}>
-                        <AvatarArt seed={persona.avatar.seed} palette={persona.avatar.palette} size={30} />
+                        <AvatarArt seed={ANON_USER.avatar.seed} palette={ANON_USER.avatar.palette} size={30} />
                       </View>
                       <VenetianMask size={13} color={c.muted} />
-                      <Txt size={13.5} weight="semi">{persona.name}</Txt>
+                      <Txt size={13.5} weight="semi">Anonymous</Txt>
                     </>
                   ) : (
                     <>

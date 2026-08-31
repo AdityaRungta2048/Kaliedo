@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer,
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Haptics from 'expo-haptics'
 import { Platform } from 'react-native'
-import type { AlterEgo, AppNotification, Comment, Conversation, FeedMode, Identity, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/shared/types'
+import type { AlterEgo, AppNotification, Comment, Conversation, ExploreTab, FeedMode, Identity, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/shared/types'
 import { nicheChangeState, suggestAlterEgoHandle } from '@/lib/shared/identity'
 import { POSTS } from '@/lib/shared/posts'
 import { CONVERSATIONS, NOTIFICATIONS } from '@/lib/shared/social'
@@ -60,6 +60,7 @@ type State = Persisted & {
   conversations: Conversation[]
   notifications: AppNotification[]
   feedMode: FeedMode
+  exploreTab: ExploreTab
   feedSeed: number
   hydrated: boolean
 }
@@ -74,6 +75,7 @@ type Action =
   | { type: 'toggleFollowTopic'; topic: Topic }
   | { type: 'toggleMuteTopic'; topic: Topic }
   | { type: 'setMode'; mode: FeedMode }
+  | { type: 'setExploreTab'; tab: ExploreTab }
   | { type: 'refresh' }
   | { type: 'addPost'; post: Post }
   | { type: 'addComment'; postId: string; comment: Comment }
@@ -102,6 +104,7 @@ function reducer(state: State, action: Action): State {
     case 'toggleFollowTopic': return { ...state, followedTopics: toggle(state.followedTopics, action.topic) }
     case 'toggleMuteTopic': return { ...state, mutedTopics: toggle(state.mutedTopics, action.topic) }
     case 'setMode': return { ...state, feedMode: action.mode }
+    case 'setExploreTab': return { ...state, exploreTab: action.tab }
     case 'refresh': return { ...state, feedSeed: state.feedSeed + 1 }
     case 'addPost': return { ...state, posts: [action.post, ...state.posts] }
     case 'addComment':
@@ -192,6 +195,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     conversations: CONVERSATIONS,
     notifications: NOTIFICATIONS,
     feedMode: 'for-you' as FeedMode,
+    exploreTab: 'nearby' as ExploreTab,
     feedSeed: 1,
     hydrated: false,
   })
@@ -209,8 +213,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Only the user-owned slice is persisted; mock content rehydrates fresh.
   useEffect(() => {
     if (!state.hydrated) return
-    const { posts, conversations, notifications, feedMode, feedSeed, hydrated, ...persisted } = state
-    void posts; void conversations; void notifications; void feedMode; void feedSeed; void hydrated
+    const { posts, conversations, notifications, feedMode, exploreTab, feedSeed, hydrated, ...persisted } = state
+    void posts; void conversations; void notifications; void feedMode; void exploreTab; void feedSeed; void hydrated
     AsyncStorage.setItem(KEY, JSON.stringify(persisted)).catch(() => {})
   }, [state])
 

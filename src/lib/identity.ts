@@ -1,4 +1,4 @@
-import type { AlterEgo, ArtPalette, Post, Topic, User } from './types'
+import type { AlterEgo, Post, Topic, User } from './types'
 import { ANON_ID, ANON_USER, userById } from './users'
 
 /** One month, in milliseconds. */
@@ -28,57 +28,14 @@ export function formatCooldown(state: NicheChangeState): string {
 }
 
 /**
- * Anonymous personas are named, not numbered — a handle readers can recognise
- * across posts is what lets an anonymous writer build something worth revealing.
- * The trade-off is linkability: a persona that posts often on one subject can be
- * guessed at. The interface says so before anyone's first anonymous post.
+ * Every anonymous post wears the same face. Giving each author a stable handle
+ * would have made revealing a single post unmask all their other anonymous work
+ * retroactively — one identity for everyone is what keeps the reveal per-post.
  */
-const PERSONA_WORDS = [
-  'Inkwell', 'Lantern', 'Harbour', 'Meridian', 'Vellum', 'Aperture', 'Thistle',
-  'Quarry', 'Ember', 'Lattice', 'Almanac', 'Beacon', 'Cinder', 'Driftwood',
-  'Foxglove', 'Granite', 'Juniper', 'Kestrel', 'Marginalia', 'Nocturne',
-  'Orchard', 'Palimpsest', 'Quill', 'Ravine', 'Sable', 'Tessera', 'Umber', 'Verso',
-]
-
-const PERSONA_PALETTES: ArtPalette[] = ['ink', 'iris', 'moss', 'ember', 'amber']
-
-/** FNV-1a. Small, stable, and enough to scatter ids across the word list. */
-function hash(input: string): number {
-  let h = 0x811c9dc5
-  for (let i = 0; i < input.length; i++) {
-    h ^= input.charCodeAt(i)
-    h = Math.imul(h, 0x01000193) >>> 0
-  }
-  return h
-}
-
-/**
- * One persona per person, stable for as long as they stay anonymous.
- *
- * In a real product the mapping lives on the server and nothing else can compute
- * it. Here it is derived from the author id, which the prototype already ships to
- * the client — so this is the shape of the feature, not its privacy guarantee.
- */
-export function anonPersona(realUserId: string): User {
-  const h = hash(`kaleido:anon:${realUserId}`)
-  const word = PERSONA_WORDS[h % PERSONA_WORDS.length]
-  const number = 10 + ((h >>> 8) % 89)
-  return {
-    id: `anon_${(h >>> 0).toString(36)}`,
-    handle: `${word.toLowerCase()}${number}`,
-    name: `${word} ${number}`,
-    bio: 'Writing without a name for now.',
-    interests: [],
-    followers: 0,
-    following: 0,
-    avatar: { seed: (h >>> 4) % 9973, palette: PERSONA_PALETTES[(h >>> 16) % PERSONA_PALETTES.length] },
-    joined: '—',
-  }
-}
 
 /** Who the interface should show as the author. Never leaks the real one. */
 export function displayAuthor(post: Post): User {
-  return post.anonymous ? anonPersona(post.authorId) : userById(post.authorId)
+  return post.anonymous ? ANON_USER : userById(post.authorId)
 }
 
 export function isAnonymous(post: Post): boolean {

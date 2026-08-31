@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
-import type { AlterEgo, AppNotification, Comment, Conversation, FeedMode, Identity, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/types'
+import type { AlterEgo, AppNotification, Comment, Conversation, ExploreTab, FeedMode, Identity, Message, Mix, Post, ThemeChoice, Topic } from '@/lib/types'
 import { nicheChangeState, suggestAlterEgoHandle } from '@/lib/identity'
 import { POSTS } from '@/lib/posts'
 import { USERS, ME_ID, userById } from '@/lib/users'
@@ -67,6 +67,7 @@ type State = Persisted & {
   conversations: Conversation[]
   notifications: AppNotification[]
   feedMode: FeedMode
+  exploreTab: ExploreTab
   feedSeed: number
 }
 
@@ -79,6 +80,7 @@ type Action =
   | { type: 'toggleFollowTopic'; topic: Topic }
   | { type: 'toggleMuteTopic'; topic: Topic }
   | { type: 'setMode'; mode: FeedMode }
+  | { type: 'setExploreTab'; tab: ExploreTab }
   | { type: 'refresh' }
   | { type: 'addPost'; post: Post }
   | { type: 'addComment'; postId: string; comment: Comment }
@@ -108,6 +110,7 @@ function reducer(state: State, action: Action): State {
     case 'toggleFollowTopic': return { ...state, followedTopics: toggle(state.followedTopics, action.topic) }
     case 'toggleMuteTopic': return { ...state, mutedTopics: toggle(state.mutedTopics, action.topic) }
     case 'setMode': return { ...state, feedMode: action.mode }
+    case 'setExploreTab': return { ...state, exploreTab: action.tab }
     case 'refresh': return { ...state, feedSeed: state.feedSeed + 1 }
     case 'addPost': return { ...state, posts: [action.post, ...state.posts] }
     case 'addComment':
@@ -209,6 +212,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     conversations: CONVERSATIONS,
     notifications: NOTIFICATIONS,
     feedMode: 'for-you' as FeedMode,
+    exploreTab: 'nearby' as ExploreTab,
     feedSeed: 1,
   }))
 
@@ -247,7 +251,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Persist only the user-owned slice; mock content is always rehydrated fresh.
   useEffect(() => {
-    const { posts: _p, conversations: _c, notifications: _n, feedMode: _f, feedSeed: _s, ...persisted } = state
+    const { posts: _p, conversations: _c, notifications: _n, feedMode: _f, exploreTab: _e, feedSeed: _s, ...persisted } = state
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted)) } catch { /* private mode */ }
   }, [state])
 
