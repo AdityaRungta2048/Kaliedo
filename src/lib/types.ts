@@ -80,7 +80,7 @@ export type Identity = 'main' | 'alter'
 
 export type Relevance = 'familiar' | 'related' | 'explore'
 
-export type FeedMode = 'for-you' | 'following' | 'explore' | 'unsigned'
+export type FeedMode = 'for-you' | 'explore'
 
 /** Explore's inner scope: discovery beyond your circle, or the people in it. */
 export type ExploreTab = 'nearby' | 'following'

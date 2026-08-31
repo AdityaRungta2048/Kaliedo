@@ -60,10 +60,6 @@ export function buildFeed(input: FeedInput): FeedItem[] {
   // Focused mode is a hard filter, not a weighting — that is the whole promise.
   if (focusNiche) eligible = eligible.filter((p) => p.topics.includes(focusNiche))
 
-  // Unsigned is a lens over the same engine, not a separate feed: anonymous posts
-  // also appear in For you, so they compete for reach on the writing alone.
-  if (mode === 'unsigned') eligible = eligible.filter((p) => p.anonymous === true)
-
   const tagged: FeedItem[] = eligible.map((p) => ({
     post: p,
     relevance: relevanceOf(p, interests),
@@ -79,9 +75,6 @@ export function buildFeed(input: FeedInput): FeedItem[] {
     return seededOrder(tagged, seed)
   }
 
-  if (mode === 'following') {
-    return seededOrder(tagged.filter((i) => i.fromFollowing), seed)
-  }
   if (mode === 'explore') {
     // Explore's "Following" half is the same discovery surface narrowed to the
     // people you already read — the Reels split, not a second Following feed.

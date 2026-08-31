@@ -4,9 +4,7 @@ import { cx } from '@/lib/utils'
 
 export const FEED_MODES: { id: FeedMode; label: string; blurb: string }[] = [
   { id: 'for-you', label: 'For you', blurb: 'Composed from your mix' },
-  { id: 'following', label: 'Following', blurb: 'Only people you follow' },
   { id: 'explore', label: 'Explore', blurb: 'Beyond the people you already read' },
-  { id: 'unsigned', label: 'Unsigned', blurb: 'Written without a name' },
 ]
 
 /** Explore's inner scope, the way Reels splits discovery from the people you follow. */

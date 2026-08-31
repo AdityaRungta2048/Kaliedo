@@ -161,12 +161,14 @@ export function Home() {
                   title="Nothing here yet"
                   body={focused
                     ? `Nobody has published in ${state.alterEgo!.niche} yet. Focused mode shows this niche and nothing else.`
-                    : state.feedMode === 'following'
-                      ? 'You are not following anyone whose work landed today. Explore is a good place to fix that.'
+                    : state.feedMode === 'explore' && state.exploreTab === 'following'
+                      ? 'Nobody you follow has published today. Next door is a good place to find someone new.'
                       : 'Widen your mix or add an interest and this will fill up.'}
                   action={focused
                     ? <Button onClick={() => dispatch({ type: 'setIdentity', identity: 'main' })}>Leave focused mode</Button>
-                    : <Button onClick={() => dispatch({ type: 'setMode', mode: 'explore' })}>Open Explore</Button>}
+                    : state.feedMode === 'explore'
+                      ? <Button onClick={() => dispatch({ type: 'setExploreTab', tab: 'nearby' })}>Open Next door</Button>
+                      : <Button onClick={() => dispatch({ type: 'setMode', mode: 'explore' })}>Open Explore</Button>}
                 />
               </motion.div>
             ) : (

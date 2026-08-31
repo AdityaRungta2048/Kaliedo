@@ -18,9 +18,7 @@ import { LogoMark } from '@/components/Art'
 
 const MODES: { id: FeedMode; label: string; blurb: string }[] = [
   { id: 'for-you', label: 'For you', blurb: 'Composed from your mix' },
-  { id: 'following', label: 'Following', blurb: 'Only people you follow' },
   { id: 'explore', label: 'Explore', blurb: 'Beyond the people you already read' },
-  { id: 'unsigned', label: 'Unsigned', blurb: 'Written without a name' },
 ]
 
 /** Explore's inner scope, the way Reels splits discovery from people you follow. */
@@ -210,12 +208,14 @@ export default function Home() {
                 title="Nothing here yet"
                 body={focused
                   ? `Nobody has published in ${state.alterEgo!.niche} yet. Focused mode shows this niche and nothing else.`
-                  : state.feedMode === 'following'
-                    ? 'Nobody you follow published today. Explore is a good place to fix that.'
+                  : state.feedMode === 'explore' && state.exploreTab === 'following'
+                    ? 'Nobody you follow has published today. Next door is a good place to find someone new.'
                     : 'Widen your mix or add an interest and this will fill up.'}
                 action={focused
                   ? <Button label="Leave focused mode" onPress={() => dispatch({ type: 'setIdentity', identity: 'main' })} />
-                  : <Button label="Open Explore" onPress={() => changeMode('explore')} />}
+                  : state.feedMode === 'explore'
+                    ? <Button label="Open Next door" onPress={() => dispatch({ type: 'setExploreTab', tab: 'nearby' })} />
+                    : <Button label="Open Explore" onPress={() => changeMode('explore')} />}
               />
             }
             refreshControl={
