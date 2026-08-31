@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ShieldCheck, TrendingUp, VenetianMask } from 'lucide-react'
 import type { Post } from '@/lib/types'
-import { canReveal, hasBigReach } from '@/lib/identity'
+import { anonPersona, canReveal, hasBigReach } from '@/lib/identity'
 import { useApp } from '@/store/AppContext'
 import { compact } from '@/lib/utils'
 import { Button, Pressable } from '@/components/ui/Primitives'
@@ -20,15 +20,16 @@ export function RevealPanel({ post }: { post: Post }) {
   if (!canReveal(post, me.id)) return null
 
   const big = hasBigReach(post, liked)
+  const persona = anonPersona(post.authorId)
 
   return (
     <div className="rounded-2xl border border-line bg-canvas">
       <div className="flex items-start gap-3 px-4 py-3.5">
         <VenetianMask size={16} className="mt-0.5 shrink-0 text-muted" />
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-medium text-ink">Only you know this is yours</p>
+          <p className="text-[13px] font-medium text-ink">Published as {persona.name}</p>
           <p className="mt-1 text-[12.5px] leading-relaxed text-muted">
-            It is published without your name. You can put your name on it whenever you like — but not the other way round.
+            Only you know this is yours. You can put your real name on it whenever you like — but not the other way round.
           </p>
 
           {big && (
@@ -49,7 +50,7 @@ export function RevealPanel({ post }: { post: Post }) {
               >
                 <p className="mb-2.5 flex items-start gap-2 text-[12.5px] leading-relaxed text-ink">
                   <ShieldCheck size={13} className="mt-0.5 shrink-0 text-ember" />
-                  This is permanent. Once your name is on it, it cannot be made anonymous again.
+                  This is permanent. Once your name replaces {persona.name} on this piece, it cannot be made anonymous again.
                 </p>
                 <div className="flex gap-2">
                   <Button

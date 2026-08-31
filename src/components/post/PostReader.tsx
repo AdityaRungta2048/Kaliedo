@@ -77,7 +77,7 @@ export function PostReader({ post, onClose, onOpenPost }: { post: Post; onClose:
           <div className="flex min-w-0 flex-1 items-center gap-1.5">
             {anon ? (
               <span className="flex items-center gap-1.5 truncate text-[13.5px] font-semibold text-ink">
-                <VenetianMask size={13} className="shrink-0 text-muted" /> Anonymous
+                <VenetianMask size={13} className="shrink-0 text-muted" /> {author.name}
               </span>
             ) : (
               <Link to={`/u/${author.handle}`} onClick={onClose} className="truncate text-[13.5px] font-semibold text-ink hover:underline">

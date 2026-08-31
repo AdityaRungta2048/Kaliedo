@@ -75,8 +75,8 @@ export function Home() {
             <div className="flex items-center gap-3 rounded-full border border-iris/30 bg-iris/[0.07] px-3.5 py-2">
               <Crosshair size={14} className="shrink-0 text-iris" />
               <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-ink">
-                Focused · {state.alterEgo!.niche} only
-                <span className="ml-1.5 font-normal text-muted">as {state.alterEgo!.name}</span>
+                {state.alterEgo!.name}
+                <span className="ml-1.5 font-normal text-muted">· Topic: {state.alterEgo!.niche}</span>
               </span>
               <Pressable
                 onClick={() => { dispatch({ type: 'setIdentity', identity: 'main' }); toast('Back to your main feed') }}

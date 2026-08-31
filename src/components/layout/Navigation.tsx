@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
-import { Avatar, Pressable } from '@/components/ui/Primitives'
+import { Pressable } from '@/components/ui/Primitives'
 import { IdentityChip } from './FocusMode'
 import { cx } from '@/lib/utils'
 
@@ -94,6 +94,7 @@ export function Sidebar({ collapsed, onToggle, onOpenFocus }: { collapsed: boole
 
       <div className={cx('flex flex-col gap-2 border-t border-line py-3', collapsed ? 'items-center px-2' : 'px-3')}>
         <IdentityChip onOpen={onOpenFocus} collapsed={collapsed} />
+        <div className="h-px bg-line" />
 
         <Pressable onClick={() => setDemoOpen(true)} title="Demo mode"
           className={cx('flex items-center rounded-xl text-[13.5px] font-medium text-muted transition-colors hover:bg-ink/[0.04] hover:text-ink',
@@ -111,15 +112,6 @@ export function Sidebar({ collapsed, onToggle, onOpenFocus }: { collapsed: boole
           {!collapsed && 'Collapse'}
         </Pressable>
 
-        {!collapsed && (
-          <NavLink to={`/u/${me.handle}`} className="mt-1 flex items-center gap-2.5 rounded-xl px-2 py-2 transition-colors hover:bg-ink/[0.04]">
-            <Avatar user={me} size={32} link={false} />
-            <span className="min-w-0">
-              <span className="block truncate text-[13.5px] font-semibold text-ink">{me.name}</span>
-              <span className="block truncate text-[12px] text-faint">@{me.handle}</span>
-            </span>
-          </NavLink>
-        )}
       </div>
     </aside>
   )

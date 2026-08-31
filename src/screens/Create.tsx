@@ -9,7 +9,7 @@ import { cx, readTime } from '@/lib/utils'
 import { CoverArt } from '@/components/brand/CoverArt'
 import { Avatar, Button, Pressable, Switch, TopicChip } from '@/components/ui/Primitives'
 import { AvatarArt } from '@/components/brand/CoverArt'
-import { ANON_USER } from '@/lib/identity'
+import { anonPersona } from '@/lib/identity'
 
 const KINDS: { id: PostKind; label: string; blurb: string }[] = [
   { id: 'essay', label: 'Essay', blurb: 'Something with a beginning and an end' },
@@ -45,6 +45,7 @@ export function Create() {
   const [photo, setPhoto] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
   const [anonymous, setAnonymous] = useState(false)
+  const persona = useMemo(() => anonPersona(me.id), [me.id])
   const fileRef = useRef<HTMLInputElement>(null)
 
   const paragraphs = useMemo(() => bodyText.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean), [bodyText])
@@ -259,9 +260,15 @@ export function Create() {
                     </div>
                     <p className="mt-1 text-[12.5px] leading-relaxed text-muted">
                       {anonymous
-                        ? 'Your name will not appear anywhere on this piece. It still earns reach, replies and saves. You can put your name on it later — but a signed post can never be made anonymous.'
+                        ? `This publishes as ${persona.name}, the handle all your anonymous writing shares. It still earns reach, replies and saves, and it appears in the normal feed alongside everything else. You can put your real name on it later — but a signed post can never be made anonymous.`
                         : 'Your name will appear on this piece. Turn this on before publishing if you would rather it stood on its own.'}
                     </p>
+                    {anonymous && (
+                      <p className="mt-2 text-[12px] leading-relaxed text-faint">
+                        Worth knowing: because the handle is the same every time, someone reading enough of your
+                        anonymous work on one subject could guess who you are.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -271,10 +278,10 @@ export function Create() {
                   {anonymous ? (
                     <>
                       <span className="h-[30px] w-[30px] overflow-hidden rounded-full">
-                        <AvatarArt seed={ANON_USER.avatar.seed} palette={ANON_USER.avatar.palette} />
+                        <AvatarArt seed={persona.avatar.seed} palette={persona.avatar.palette} />
                       </span>
                       <span className="flex items-center gap-1.5 text-[13.5px] font-semibold text-ink">
-                        <VenetianMask size={13} className="text-muted" /> Anonymous
+                        <VenetianMask size={13} className="text-muted" /> {persona.name}
                       </span>
                     </>
                   ) : (

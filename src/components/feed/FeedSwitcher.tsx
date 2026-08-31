@@ -7,6 +7,7 @@ export const FEED_MODES: { id: FeedMode; label: string; blurb: string }[] = [
   { id: 'following', label: 'Following', blurb: 'Only people you follow' },
   { id: 'explore', label: 'Explore', blurb: 'Mostly writers you don’t follow yet' },
   { id: 'nearby', label: 'Next door', blurb: 'One step outside your interests' },
+  { id: 'unsigned', label: 'Unsigned', blurb: 'Written without a name' },
 ]
 
 export function FeedSwitcher({ mode, onChange }: { mode: FeedMode; onChange: (m: FeedMode) => void }) {

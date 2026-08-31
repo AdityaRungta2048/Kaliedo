@@ -21,6 +21,7 @@ const MODES: { id: FeedMode; label: string; blurb: string }[] = [
   { id: 'following', label: 'Following', blurb: 'Only people you follow' },
   { id: 'explore', label: 'Explore', blurb: 'Writers you don’t follow yet' },
   { id: 'nearby', label: 'Next door', blurb: 'One step outside your interests' },
+  { id: 'unsigned', label: 'Unsigned', blurb: 'Written without a name' },
 ]
 
 export default function Home() {

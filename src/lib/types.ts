@@ -80,7 +80,7 @@ export type Identity = 'main' | 'alter'
 
 export type Relevance = 'familiar' | 'related' | 'explore'
 
-export type FeedMode = 'for-you' | 'following' | 'explore' | 'nearby'
+export type FeedMode = 'for-you' | 'following' | 'explore' | 'nearby' | 'unsigned'
 
 export type Mix = { familiar: number; related: number; explore: number }
 

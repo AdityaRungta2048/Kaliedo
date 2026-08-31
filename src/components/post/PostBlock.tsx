@@ -68,7 +68,7 @@ function PostBlockBase({
             {anon ? (
               <span className="flex items-center gap-1.5 truncate text-[13.5px] font-semibold text-ink">
                 <VenetianMask size={13} className="shrink-0 text-muted" />
-                Anonymous
+                {author.name}
               </span>
             ) : (
               <Link

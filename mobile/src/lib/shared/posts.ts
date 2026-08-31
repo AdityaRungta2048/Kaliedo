@@ -494,3 +494,61 @@ POSTS.push(
     ],
   },
 )
+
+POSTS.push(
+  {
+    id: 'p36', authorId: 'u_rahul', kind: 'note', minutesAgo: 140, anonymous: true,
+    title: 'We raised at a number I do not believe in',
+    body: [
+      'The round closed on Tuesday. The valuation is roughly four times what I would pay for this company if it were somebody else’s, and I signed anyway, because the alternative was a harder eighteen months.',
+      'Everyone in the room knew. That is the part I keep turning over — not that the number is fiction, but that fiction was the professional choice and honesty would have been the amateur one.',
+    ],
+    topics: ['Startups', 'Business'], likes: 9240, reposts: 2310,
+    concepts: ['funding', 'valuation', 'honesty', 'founder'],
+    comments: [{ id: 'c33', authorId: 'u_sarah', text: 'The last sentence is going to live in my head.', minutesAgo: 90, likes: 640 }],
+  },
+  {
+    id: 'p37', authorId: 'u_olivia', kind: 'field-note', minutesAgo: 300, anonymous: true,
+    title: 'What a restaurant kitchen sounds like at 2am',
+    body: [
+      'Nothing like the shows. No shouting by then — everyone is past it. Just extraction fans, a radio nobody is listening to, and the particular sound of a man who has been standing for fourteen hours setting down a pan very gently because he does not trust himself to set it down normally.',
+      'I loved it and it broke something in me and both of those are true at once.',
+    ],
+    topics: ['Food', 'Craft'], likes: 7810, reposts: 1640,
+    concepts: ['kitchen', 'restaurant', 'work', 'night'],
+    comments: [],
+  },
+  {
+    id: 'p38', authorId: 'u_ife', kind: 'essay', minutesAgo: 520, anonymous: true,
+    title: 'The client rejected the good one and paid for the bad one',
+    body: [
+      'Two directions. One I would put in a portfolio, one I would not admit to. They picked the second, and they were not wrong to — it fits the business they actually run, not the one I imagined for them on a Tuesday afternoon.',
+      'The mature read is that taste without context is just preference wearing a nicer coat. I have believed that for about six hours now and I expect it to last until the next presentation.',
+    ],
+    topics: ['Design', 'Craft', 'Business'], likes: 5120, reposts: 980,
+    concepts: ['client', 'taste', 'work', 'design'],
+    comments: [],
+  },
+  {
+    id: 'p39', authorId: 'u_greta', kind: 'note', minutesAgo: 700, anonymous: true,
+    title: 'I stopped running for eight months and told nobody',
+    body: [
+      'Everyone assumed injury. It was not injury. I simply could not make myself leave the flat, and the longer that went on the more elaborate the reasons I gave became.',
+      'I am running again. Slowly, badly, three times a week. Writing this without my name because the version of me people follow does not have gaps in it, and I am tired of maintaining her.',
+    ],
+    topics: ['Fitness', 'Health', 'Psychology'], likes: 11400, reposts: 2890,
+    concepts: ['running', 'depression', 'honesty', 'gap'],
+    comments: [{ id: 'c34', authorId: 'u_jonas', text: 'The last clause. That is the whole thing, isn’t it.', minutesAgo: 500, likes: 1210 }],
+  },
+  {
+    id: 'p40', authorId: 'u_daniel', kind: 'note', minutesAgo: 880, anonymous: true,
+    title: 'The feature everyone praised was a bug we kept',
+    body: [
+      'A physics error let players climb geometry they were never meant to reach. We found it in week three of playtesting and spent a day deciding whether to fix it.',
+      'We kept it. Two years later it is in every video about the game, described as a design decision. I have never corrected anyone and I am not correcting anyone now, exactly.',
+    ],
+    topics: ['Gaming', 'Design'], likes: 8630, reposts: 2140,
+    concepts: ['bug', 'games', 'design', 'accident'],
+    comments: [],
+  },
+)
