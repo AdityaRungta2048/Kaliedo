@@ -8,6 +8,7 @@ import { RELEVANCE_COPY } from '@/lib/recommend'
 import { compact, cx, timeAgo } from '@/lib/utils'
 import { Avatar, Pressable } from '@/components/ui/Primitives'
 import { Sheet } from '@/components/ui/Overlay'
+import { EASE, T_SLOW } from '@/lib/motion'
 
 /** The burst is eight short strokes — a spark, not confetti. */
 function Burst({ show }: { show: boolean }) {
@@ -51,7 +52,7 @@ export function LikeButton({ post, showCount = true }: { post: Post; showCount?:
     >
       <span className="relative flex items-center justify-center">
         <Burst show={burst} />
-        <motion.span animate={liked ? { scale: [1, 1.35, 0.92, 1] } : { scale: 1 }} transition={{ duration: 0.42, times: [0, 0.3, 0.6, 1] }}>
+        <motion.span animate={liked ? { scale: [1, 1.28, 1] } : { scale: 1 }} transition={{ duration: 0.3, times: [0, 0.4, 1], ease: EASE }}>
           <Heart size={16} strokeWidth={2} fill={liked ? 'currentColor' : 'none'} />
         </motion.span>
       </span>
@@ -78,7 +79,7 @@ export function SaveButton({ post, withLabel = false }: { post: Post; withLabel?
       className={cx('flex items-center gap-1.5 rounded-full px-1.5 py-1 text-[12.5px] font-medium transition-colors',
         saved ? 'text-amber' : 'text-muted hover:text-ink')}
     >
-      <motion.span animate={saved ? { y: [0, -4, 0], rotate: [0, -8, 0] } : {}} transition={{ duration: 0.34 }}>
+      <motion.span animate={saved ? { y: [0, -4, 0] } : {}} transition={{ duration: 0.28, ease: EASE }}>
         <Bookmark size={16} strokeWidth={2} fill={saved ? 'currentColor' : 'none'} />
       </motion.span>
       {withLabel && (
@@ -101,7 +102,7 @@ export function RepostButton({ post }: { post: Post }) {
       aria-pressed={done} aria-label="Repost"
       className={cx('flex items-center gap-1.5 rounded-full px-1.5 py-1 text-[12.5px] font-medium transition-colors', done ? 'text-moss' : 'text-muted hover:text-moss')}
     >
-      <motion.span animate={done ? { rotate: 360 } : { rotate: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 18 }}>
+      <motion.span animate={done ? { rotate: 360 } : { rotate: 0 }} transition={T_SLOW}>
         <Repeat2 size={17} strokeWidth={2} />
       </motion.span>
       <span className="tabular-nums">{compact(post.reposts + (done ? 1 : 0))}</span>

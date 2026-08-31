@@ -4,12 +4,12 @@ import {
   type StyleProp, type TextStyle, type ViewStyle,
 } from 'react-native'
 import Animated, {
-  FadeIn, useAnimatedStyle, useSharedValue, withSpring, withRepeat, withTiming,
+  FadeIn, useAnimatedStyle, useSharedValue, withRepeat, withTiming,
 } from 'react-native-reanimated'
 import { Check } from 'lucide-react-native'
 import { Link } from 'expo-router'
 import { useTheme } from '@/theme/ThemeProvider'
-import { FONT, RADIUS, SPRING_SNAPPY } from '@/theme/tokens'
+import { FONT, RADIUS, T_BASE, T_FAST } from '@/theme/tokens'
 import { AvatarArt } from './Art'
 import { useApp } from '@/store/AppContext'
 import type { User } from '@/lib/shared/types'
@@ -26,8 +26,8 @@ export const Tap = forwardRef<View, PressableProps & { style?: StyleProp<ViewSty
       <AnimatedPressable
         ref={ref as never}
         style={[style, animated]}
-        onPressIn={(e) => { scale.value = withSpring(scaleTo, SPRING_SNAPPY); onPressIn?.(e) }}
-        onPressOut={() => { scale.value = withSpring(1, SPRING_SNAPPY) }}
+        onPressIn={(e) => { scale.value = withTiming(scaleTo, T_FAST); onPressIn?.(e) }}
+        onPressOut={() => { scale.value = withTiming(1, T_FAST) }}
         onPress={(e) => { if (haptic) tap(haptic); onPress?.(e) }}
         {...rest}
       >
@@ -220,7 +220,7 @@ export function EmptyState({ icon, title, body, action }: { icon: ReactNode; tit
 export function Switch({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
   const { c } = useTheme()
   const x = useSharedValue(value ? 21 : 3)
-  x.value = withSpring(value ? 21 : 3, SPRING_SNAPPY)
+  x.value = withTiming(value ? 21 : 3, T_BASE)
   const knob = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }))
   return (
     <Tap onPress={() => onChange(!value)} scaleTo={0.94} accessibilityRole="switch" accessibilityState={{ checked: value }}

@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { Tabs } from 'expo-router'
 import { Bell, Compass, House, PenLine, User } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
-import { FONT, SPRING_SNAPPY } from '@/theme/tokens'
+import { FONT, T_BASE } from '@/theme/tokens'
 
 const ITEMS = [
   { name: 'index', label: 'Home', Icon: House },
@@ -23,7 +23,7 @@ const ITEMS = [
 function TabItem({ Icon, label, focused, badge }: { Icon: typeof House; label: string; focused: boolean; badge?: number }) {
   const { c } = useTheme()
   const s = useSharedValue(focused ? 1.1 : 1)
-  s.value = withSpring(focused ? 1.1 : 1, SPRING_SNAPPY)
+  s.value = withTiming(focused ? 1.1 : 1, T_BASE)
   const anim = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }))
 
   return (

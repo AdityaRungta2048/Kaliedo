@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { RotateCcw } from 'lucide-react-native'
 import type { Mix } from '@/lib/shared/types'
 import { rebalanceMix } from '@/lib/shared/recommend'
@@ -7,10 +7,11 @@ import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { Divider, Tap, Txt } from './UI'
 import { Slider } from './Slider'
+import { T_BASE } from '@/theme/tokens'
 
 function Segment({ pct, color }: { pct: number; color: string }) {
   const w = useSharedValue(pct)
-  w.value = withSpring(pct, { damping: 26, stiffness: 220 })
+  w.value = withTiming(pct, T_BASE)
   const anim = useAnimatedStyle(() => ({ width: `${w.value}%` }))
   return <Animated.View style={[{ height: '100%', backgroundColor: color }, anim]} />
 }

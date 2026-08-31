@@ -1,17 +1,18 @@
-import { memo, useRef } from 'react'
+import { memo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import { useRouter } from 'expo-router'
-import { Image as ImageIcon, Sparkles, VenetianMask } from 'lucide-react-native'
+import { EllipsisVertical, Image as ImageIcon, Sparkles, VenetianMask } from 'lucide-react-native'
 import type { Post, Relevance } from '@/lib/shared/types'
 import { displayAuthor, isAnonymous } from '@/lib/shared/identity'
 import { RELEVANCE_COPY } from '@/lib/shared/recommend'
 import { compact, excerpt, readTime, timeAgo } from '@/lib/shared/utils'
 import { useTheme } from '@/theme/ThemeProvider'
-import { RADIUS } from '@/theme/tokens'
+import { CURVE, RADIUS } from '@/theme/tokens'
 import { useReader } from '@/store/ReaderContext'
 import { Avatar, Chip, Tap, Txt, Verified } from './UI'
 import { LikeButton, SaveButton } from './PostActions'
+import { PostMenu } from './PostMenu'
 
 /**
  * The Kaleido block. Author, title, two lines of the opening, and the shape of
@@ -23,6 +24,7 @@ function PostBlockBase({ post, relevance, index = 0 }: { post: Post; relevance?:
   const router = useRouter()
   const { open, postId } = useReader()
   const ref = useRef<View>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
   const anon = isAnonymous(post)
   const author = displayAuthor(post)
   const hidden = postId === post.id
@@ -37,7 +39,7 @@ function PostBlockBase({ post, relevance, index = 0 }: { post: Post; relevance?:
 
   return (
     <Animated.View
-      entering={FadeInDown.duration(400).delay(Math.min(index * 45, 320)).springify().damping(18)}
+      entering={FadeInDown.duration(400).delay(Math.min(index * 45, 320)).easing(CURVE)}
       style={{ opacity: hidden ? 0 : 1 }}
     >
       <View ref={ref} collapsable={false}>
@@ -60,6 +62,13 @@ function PostBlockBase({ post, relevance, index = 0 }: { post: Post; relevance?:
               <Txt size={13.5} weight="semi" numberOfLines={1} style={{ flexShrink: 1 }}>{author.name}</Txt>
               {!anon && author.verified && <Verified />}
               <Txt size={12.5} color={c.faint}>· {timeAgo(post.minutesAgo)}</Txt>
+              <View style={{ flex: 1 }} />
+              <Tap
+                onPress={() => setMenuOpen(true)} accessibilityLabel="Post options"
+                hitSlop={10} style={{ padding: 2, marginRight: -4 }}
+              >
+                <EllipsisVertical size={15} color={c.faint} />
+              </Tap>
             </View>
 
             <Txt family="display" size={19} style={{ marginTop: 11, lineHeight: 24 }}>{post.title}</Txt>
@@ -98,6 +107,8 @@ function PostBlockBase({ post, relevance, index = 0 }: { post: Post; relevance?:
           </View>
         </Tap>
       </View>
+
+      <PostMenu post={post} open={menuOpen} onClose={() => setMenuOpen(false)} />
     </Animated.View>
   )
 }

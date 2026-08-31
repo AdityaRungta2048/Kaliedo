@@ -4,10 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   Extrapolation, FadeIn, interpolate, runOnJS, useAnimatedStyle,
-  useSharedValue, withSpring, withTiming,
+  useSharedValue, withTiming,
 } from 'react-native-reanimated'
 import { useRouter } from 'expo-router'
-import { ArrowLeft, ChevronDown, Sparkles, TrendingUp, VenetianMask } from 'lucide-react-native'
+import { ArrowLeft, ChevronDown, EllipsisVertical, Sparkles, TrendingUp, VenetianMask } from 'lucide-react-native'
 import type { Post } from '@/lib/shared/types'
 import { userById } from '@/lib/shared/users'
 import { canReveal, displayAuthor, hasBigReach, isAnonymous } from '@/lib/shared/identity'
@@ -16,11 +16,12 @@ import { excerpt, readTime, timeAgo } from '@/lib/shared/utils'
 import { useApp } from '@/store/AppContext'
 import { useReader, type Origin } from '@/store/ReaderContext'
 import { useTheme } from '@/theme/ThemeProvider'
-import { RADIUS } from '@/theme/tokens'
+import { RADIUS, T_BASE } from '@/theme/tokens'
 import { Avatar, Button, Card, Chip, Divider, Label, Tap, Txt, Verified } from './UI'
 import { CoverArt } from './Art'
 import { CommentButton, FollowButton, LikeButton, RepostButton, SaveButton, ShareButton } from './PostActions'
 import { CommentSheet, ShareSheet } from './Sheets'
+import { PostMenu } from './PostMenu'
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window')
 
@@ -38,6 +39,7 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
   const [comments, setComments] = useState(false)
   const [share, setShare] = useState(false)
   const [why, setWhy] = useState(false)
+  const [menu, setMenu] = useState(false)
 
   const anon = isAnonymous(post)
   const author = displayAuthor(post)
@@ -46,7 +48,7 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
   const dragY = useSharedValue(0)
 
   useEffect(() => {
-    progress.value = withSpring(1, { damping: 24, stiffness: 210, mass: 0.85 })
+    progress.value = withTiming(1, T_BASE)
   }, [progress])
 
   const dismiss = () => {
@@ -69,7 +71,7 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
         progress.value = withTiming(0, { duration: 260 }, (done) => { if (done) runOnJS(onClose)() })
         dragY.value = withTiming(0, { duration: 260 })
       } else {
-        dragY.value = withSpring(0, { damping: 22, stiffness: 260 })
+        dragY.value = withTiming(0, T_BASE)
       }
     })
 
@@ -132,6 +134,9 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
                 {!anon && author.verified && <Verified />}
               </View>
               {!anon && <FollowButton userId={author.id} size="sm" />}
+              <Tap onPress={() => setMenu(true)} accessibilityLabel="Post options" style={{ padding: 6 }}>
+                <EllipsisVertical size={17} color={c.muted} />
+              </Tap>
             </View>
           </GestureDetector>
 
@@ -278,6 +283,7 @@ export function PostReader({ post, origin, onClose }: { post: Post; origin: Orig
 
       <CommentSheet post={post} open={comments} onClose={() => setComments(false)} />
       <ShareSheet post={post} open={share} onClose={() => setShare(false)} />
+      <PostMenu post={post} open={menu} onClose={() => setMenu(false)} />
     </Modal>
   )
 }

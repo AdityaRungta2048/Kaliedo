@@ -5,6 +5,7 @@ import { Check } from 'lucide-react'
 import { AvatarArt } from '@/components/brand/CoverArt'
 import type { User } from '@/lib/types'
 import { cx } from '@/lib/utils'
+import { T_BASE, T_FAST } from '@/lib/motion'
 
 const PRESS = { scale: 0.96 }
 
@@ -13,7 +14,7 @@ export const Pressable = forwardRef<HTMLButtonElement, HTMLMotionProps<'button'>
   function Pressable({ className, children, ...rest }, ref) {
     return (
       <motion.button
-        ref={ref} whileTap={PRESS} transition={{ type: 'spring', stiffness: 520, damping: 30 }}
+        ref={ref} whileTap={PRESS} transition={T_FAST}
         className={cx('outline-none', className)} {...rest}
       >
         {children}
@@ -133,7 +134,7 @@ export function Switch({ checked, onChange, label }: { checked: boolean; onChang
       className={cx('relative h-[26px] w-[46px] shrink-0 rounded-full transition-colors duration-300', checked ? 'bg-ember' : 'bg-ink/15')}
     >
       <motion.span
-        layout transition={{ type: 'spring', stiffness: 500, damping: 34 }}
+        layout transition={T_FAST}
         className="absolute top-[3px] h-5 w-5 rounded-full bg-white shadow-soft"
         style={{ left: checked ? 23 : 3 }}
       />
@@ -150,7 +151,7 @@ export function Slider({
       <div className="pointer-events-none absolute inset-x-0 top-1/2 h-[7px] -translate-y-1/2 overflow-hidden rounded-full bg-ink/[0.09]">
         <motion.div
           className={cx('h-full rounded-full', tintClass)}
-          animate={{ width: `${value}%` }} transition={{ type: 'spring', stiffness: 300, damping: 32 }}
+          animate={{ width: `${value}%` }} transition={T_BASE}
         />
       </div>
       <input

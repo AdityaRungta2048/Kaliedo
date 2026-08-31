@@ -7,6 +7,7 @@ import { cx } from '@/lib/utils'
 import { LogoMark } from '@/components/brand/Logo'
 import { MixBar } from '@/components/feed/MixControls'
 import { Button } from '@/components/ui/Primitives'
+import { T_SLOW } from '@/lib/motion'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -134,7 +135,7 @@ export function Onboarding() {
               {step === 3 && (
                 <div className="text-center">
                   <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 180, damping: 14 }} className="mb-7 flex justify-center">
+                    transition={T_SLOW} className="mb-7 flex justify-center">
                     <LogoMark size={64} />
                   </motion.div>
                   <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.03em] text-ink sm:text-[44px]">

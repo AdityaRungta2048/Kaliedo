@@ -9,6 +9,7 @@ import { compact, cx, excerpt, readTime, timeAgo } from '@/lib/utils'
 import { Avatar, Pressable, TopicChip, VerifiedMark } from '@/components/ui/Primitives'
 import { LikeButton, SaveButton } from './Interactions'
 import { PostMenu } from './PostMenu'
+import { T_SLOW } from '@/lib/motion'
 
 export const blockLayoutId = (id: string) => `block-${id}`
 
@@ -45,7 +46,7 @@ function PostBlockBase({
       transition={{
         opacity: { duration: 0.42, delay: Math.min(index * 0.035, 0.35), ease: [0.22, 1, 0.36, 1] },
         y: { duration: 0.42, delay: Math.min(index * 0.035, 0.35), ease: [0.22, 1, 0.36, 1] },
-        layout: { type: 'spring', stiffness: 260, damping: 30 },
+        layout: T_SLOW,
       }}
       style={{ borderRadius: 18 }}
       className={cx(

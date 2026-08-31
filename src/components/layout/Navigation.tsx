@@ -9,6 +9,7 @@ import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { Pressable } from '@/components/ui/Primitives'
 import { IdentityChip } from './FocusMode'
 import { cx } from '@/lib/utils'
+import { T_BASE, T_FAST } from '@/lib/motion'
 
 export const PRIMARY_NAV = [
   { to: '/', label: 'Home', icon: Home, end: true },
@@ -52,7 +53,7 @@ export function Sidebar({ collapsed, onToggle, onOpenFocus }: { collapsed: boole
               <>
                 {isActive && (
                   <motion.span layoutId="sidebar-active" className="absolute inset-0 rounded-xl bg-ink/[0.06]"
-                    transition={{ type: 'spring', stiffness: 420, damping: 36 }} />
+                    transition={T_BASE} />
                 )}
                 <span className="relative">
                   <Icon size={19} strokeWidth={isActive ? 2.3 : 1.9} />
@@ -148,11 +149,11 @@ export function BottomNav() {
                 {active && (
                   <motion.span layoutId="bottom-indicator"
                     className="absolute top-0 h-[2.5px] w-8 rounded-full bg-ember"
-                    transition={{ type: 'spring', stiffness: 480, damping: 34 }} />
+                    transition={T_FAST} />
                 )}
                 <motion.span
                   animate={{ scale: active ? 1.1 : 1, y: active ? -1 : 0 }}
-                  transition={{ type: 'spring', stiffness: 480, damping: 26 }}
+                  transition={T_FAST}
                   className={cx('relative', active ? 'text-ink' : 'text-faint')}
                 >
                   <Icon size={21} strokeWidth={active ? 2.3 : 1.85} />

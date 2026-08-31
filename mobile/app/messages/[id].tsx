@@ -9,7 +9,7 @@ import { useTheme } from '@/theme/ThemeProvider'
 import { userById } from '@/lib/shared/users'
 import type { Art, Message } from '@/lib/shared/types'
 import { timeAgo } from '@/lib/shared/utils'
-import { RADIUS } from '@/theme/tokens'
+import { CURVE, RADIUS } from '@/theme/tokens'
 import { CoverArt } from '@/components/Art'
 import { Avatar, EmptyState, Tap, Txt, Verified } from '@/components/UI'
 
@@ -115,7 +115,7 @@ export default function Conversation() {
           const mine = m.from === 'me'
           const repliedTo = m.replyToId ? conversation.messages.find((x) => x.id === m.replyToId) : null
           return (
-            <Animated.View key={m.id} entering={FadeInDown.duration(260).springify().damping(20)}
+            <Animated.View key={m.id} entering={FadeInDown.duration(260).easing(CURVE)}
               style={{ alignItems: mine ? 'flex-end' : 'flex-start', marginBottom: m.reactions.length ? 14 : 6 }}>
               {repliedTo && (
                 <Txt size={11.5} color={c.faint} numberOfLines={1} style={{ maxWidth: '76%', marginBottom: 3, paddingHorizontal: 8 }}>

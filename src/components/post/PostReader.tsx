@@ -15,6 +15,7 @@ import { CommentButton, CommentSheet, LikeButton, RepostButton, SaveButton, Shar
 import { RevealPanel } from './RevealPanel'
 import { PostMenu } from './PostMenu'
 import { blockLayoutId } from './PostBlock'
+import { T_SLOW } from '@/lib/motion'
 
 /**
  * The expanded block. Same element, more room: the card morphs open, the writing
@@ -60,7 +61,7 @@ export function PostReader({ post, onClose, onOpenPost }: { post: Post; onClose:
       <motion.article
         layoutId={blockLayoutId(post.id)}
         style={{ borderRadius: isTablet ? 26 : 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 30 }}
+        transition={T_SLOW}
         className={cx(
           'pointer-events-auto flex flex-col overflow-hidden border-line bg-surface shadow-float',
           isTablet ? 'max-h-[90vh] w-[min(760px,92vw)] border' : 'h-full w-full',

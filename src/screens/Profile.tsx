@@ -11,6 +11,7 @@ import { PostBlock } from '@/components/post/PostBlock'
 import { CoverArt } from '@/components/brand/CoverArt'
 import { Avatar, Button, EmptyState, Pressable, TopicChip, VerifiedMark } from '@/components/ui/Primitives'
 import { FollowButton } from '@/components/profile/FollowButton'
+import { T_BASE } from '@/lib/motion'
 
 type Tab = 'posts' | 'saved' | 'interests'
 
@@ -112,7 +113,7 @@ export function Profile({ self = false }: { self?: boolean }) {
           <button key={t.id} onClick={() => setTab(t.id)}
             className={cx('relative px-3 py-3 text-[13.5px] font-medium transition-colors', tab === t.id ? 'text-ink' : 'text-muted hover:text-ink')}>
             {t.label}
-            {tab === t.id && <motion.span layoutId="profile-tab" className="absolute inset-x-2 bottom-0 h-[2px] rounded-full bg-ink" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            {tab === t.id && <motion.span layoutId="profile-tab" className="absolute inset-x-2 bottom-0 h-[2px] rounded-full bg-ink" transition={T_BASE} />}
           </button>
         ))}
         {tab !== 'interests' && (

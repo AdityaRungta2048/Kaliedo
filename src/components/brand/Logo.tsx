@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { cx } from '@/lib/utils'
+import { T_SLOW } from '@/lib/motion'
 
 /**
  * The Kaleido mark: three facets rotated around a still centre. A kaleidoscope,
@@ -11,7 +12,7 @@ export function LogoMark({ size = 28, className, animate = false }: { size?: num
       width={size} height={size} viewBox="0 0 64 64" className={cx('shrink-0', className)} aria-hidden="true"
       initial={animate ? { rotate: -25, opacity: 0, scale: 0.8 } : false}
       animate={animate ? { rotate: 0, opacity: 1, scale: 1 } : undefined}
-      transition={{ type: 'spring', stiffness: 140, damping: 16 }}
+      transition={T_SLOW}
     >
       <rect width="64" height="64" rx="15" className="fill-ink" />
       {/* Three facets offset by 40°, not 120° — an equilateral triangle rotated

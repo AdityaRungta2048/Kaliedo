@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { View } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { useTheme } from '@/theme/ThemeProvider'
-import { SPRING_SNAPPY } from '@/theme/tokens'
+import { T_BASE, T_FAST } from '@/theme/tokens'
 
 const KNOB = 22
 
@@ -22,11 +22,11 @@ export function Slider({
   const pan = Gesture.Pan()
     .minDistance(0)
     .onBegin((e) => {
-      dragging.value = withSpring(1, SPRING_SNAPPY)
+      dragging.value = withTiming(1, T_FAST)
       if (width > 0) runOnJS(commit)((e.x / width) * 100)
     })
     .onUpdate((e) => { if (width > 0) runOnJS(commit)((e.x / width) * 100) })
-    .onFinalize(() => { dragging.value = withSpring(0, SPRING_SNAPPY) })
+    .onFinalize(() => { dragging.value = withTiming(0, T_BASE) })
 
   const fill = useAnimatedStyle(() => ({ width: `${local.value}%` }))
   const knob = useAnimatedStyle(() => ({

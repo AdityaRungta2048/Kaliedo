@@ -4,11 +4,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Animated, { FadeIn } from 'react-native-reanimated'
 import { useRouter } from 'expo-router'
 import * as Clipboard from 'expo-clipboard'
-import { ArrowLeft, Bookmark, CalendarDays, MapPin, Settings as SettingsIcon, Share2 } from 'lucide-react-native'
+import { ArrowLeft, Bookmark, CalendarDays, LayoutGrid, MapPin, Rows3, Settings as SettingsIcon, Share2 } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { USERS } from '@/lib/shared/users'
-import { compact } from '@/lib/shared/utils'
+import { compact, excerpt } from '@/lib/shared/utils'
 import { isAnonymous } from '@/lib/shared/identity'
 import { RADIUS } from '@/theme/tokens'
 import { PostBlock } from '@/components/PostBlock'
@@ -23,6 +23,7 @@ export function ProfileScreen({ handle, self }: { handle?: string; self?: boolea
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const [tab, setTab] = useState<Tab>('posts')
+  const [layout, setLayout] = useState<'list' | 'grid'>('list')
 
   const user = useMemo(() => {
     if (self) return me
@@ -122,11 +123,21 @@ export function ProfileScreen({ handle, self }: { handle?: string; self?: boolea
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', gap: 4, marginTop: 18, borderBottomWidth: StyleSheet.hairlineWidth * 2, borderBottomColor: c.line }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 18, borderBottomWidth: StyleSheet.hairlineWidth * 2, borderBottomColor: c.line }}>
           {tabs.map((t) => (
             <Tap key={t.id} onPress={() => setTab(t.id)} scaleTo={0.96}
               style={{ paddingHorizontal: 12, paddingVertical: 12, borderBottomWidth: 2, borderBottomColor: tab === t.id ? c.ink : 'transparent' }}>
               <Txt size={13.5} weight="medium" color={tab === t.id ? c.ink : c.muted}>{t.label}</Txt>
+            </Tap>
+          ))}
+          <View style={{ flex: 1 }} />
+          {tab !== 'interests' && ([['list', Rows3], ['grid', LayoutGrid]] as const).map(([id, Icon]) => (
+            <Tap
+              key={id} onPress={() => setLayout(id)} accessibilityLabel={`${id} view`}
+              accessibilityState={{ selected: layout === id }}
+              style={{ padding: 8, borderRadius: RADIUS.sm, backgroundColor: layout === id ? c.ink + '12' : 'transparent' }}
+            >
+              <Icon size={16} color={layout === id ? c.ink : c.faint} />
             </Tap>
           ))}
         </View>
@@ -152,9 +163,27 @@ export function ProfileScreen({ handle, self }: { handle?: string; self?: boolea
               action={isMe && tab !== 'saved' ? <Button label="Write something" onPress={() => router.push('/create')} /> : undefined}
             />
           ) : (
+            layout === 'grid' ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+              {shown.map((p) => (
+                <View
+                  key={p.id}
+                  style={{
+                    width: '47.8%', aspectRatio: 1, padding: 12, borderRadius: RADIUS.lg, overflow: 'hidden',
+                    justifyContent: 'space-between', backgroundColor: c.surface,
+                    borderWidth: StyleSheet.hairlineWidth * 2, borderColor: c.line,
+                  }}
+                >
+                  <Txt family="display" size={14} numberOfLines={3}>{p.title}</Txt>
+                  <Txt size={11} color={c.muted} numberOfLines={2}>{excerpt(p.body, 46)}</Txt>
+                </View>
+              ))}
+            </View>
+            ) : (
             <View style={{ gap: 14 }}>
               {shown.map((p, i) => <PostBlock key={p.id} post={p} index={i} />)}
             </View>
+            )
           )}
         </View>
       </ScrollView>

@@ -5,6 +5,7 @@ import { Bookmark, Check, Heart, Info } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
 import { Txt } from './UI'
+import { CURVE } from '@/theme/tokens'
 
 const ICONS = { check: Check, heart: Heart, bookmark: Bookmark, info: Info }
 
@@ -23,7 +24,7 @@ export function Toaster() {
         return (
           <Animated.View
             key={t.id}
-            entering={FadeInDown.duration(260).springify().damping(20)}
+            entering={FadeInDown.duration(260).easing(CURVE)}
             exiting={FadeOutDown.duration(180)}
             style={{
               flexDirection: 'row', alignItems: 'center', gap: 9,

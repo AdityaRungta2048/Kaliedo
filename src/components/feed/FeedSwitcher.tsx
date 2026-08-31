@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import type { ExploreTab, FeedMode } from '@/lib/types'
 import { cx } from '@/lib/utils'
+import { T_BASE } from '@/lib/motion'
 
 export const FEED_MODES: { id: FeedMode; label: string; blurb: string }[] = [
   { id: 'for-you', label: 'For you', blurb: 'Composed from your mix' },
@@ -30,7 +31,7 @@ export function FeedSwitcher({ mode, onChange }: { mode: FeedMode; onChange: (m:
             {active && (
               <motion.span
                 layoutId="feed-pill" className="absolute inset-0 rounded-full bg-ink"
-                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                transition={T_BASE}
               />
             )}
             <span className="relative">{m.label}</span>

@@ -9,6 +9,7 @@ import type { NotificationKind } from '@/lib/types'
 import { cx, timeAgo } from '@/lib/utils'
 import { Avatar, EmptyState, Pressable, Skeleton } from '@/components/ui/Primitives'
 import { FollowButton } from '@/components/profile/FollowButton'
+import { T_BASE } from '@/lib/motion'
 
 const FILTERS: { id: 'all' | NotificationKind; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -56,7 +57,7 @@ export function Activity() {
         {FILTERS.map((f) => (
           <button key={f.id} onClick={() => setFilter(f.id)}
             className={cx('relative shrink-0 rounded-full px-3.5 py-1.5 text-[13.5px] font-medium transition-colors', filter === f.id ? 'text-canvas' : 'text-muted hover:text-ink')}>
-            {filter === f.id && <motion.span layoutId="activity-pill" className="absolute inset-0 rounded-full bg-ink" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            {filter === f.id && <motion.span layoutId="activity-pill" className="absolute inset-0 rounded-full bg-ink" transition={T_BASE} />}
             <span className="relative">{f.label}</span>
           </button>
         ))}

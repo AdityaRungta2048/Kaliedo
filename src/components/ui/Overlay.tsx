@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import { useIsTablet } from '@/lib/useMediaQuery'
 import { cx } from '@/lib/utils'
 import { Pressable } from './Primitives'
+import { T_BASE } from '@/lib/motion'
 
 function useLockScroll(active: boolean) {
   useEffect(() => {
@@ -67,7 +68,7 @@ export function Sheet({
             initial={isTablet ? { opacity: 0, scale: 0.96 } : { y: '100%' }}
             animate={isTablet ? { opacity: 1, scale: 1 } : { y: 0 }}
             exit={isTablet ? { opacity: 0, scale: 0.97 } : { y: '100%' }}
-            transition={{ type: 'spring', stiffness: 340, damping: 34 }}
+            transition={T_BASE}
             drag={isTablet ? false : 'y'}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.4 }}

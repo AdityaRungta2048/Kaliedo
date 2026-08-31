@@ -14,6 +14,7 @@ import { RADIUS } from '@/theme/tokens'
 import { MixControls } from '@/components/MixControls'
 import { Sheet } from '@/components/Sheets'
 import { FocusSheet } from '@/components/FocusSheet'
+import { DemoMode } from '@/components/DemoMode'
 import { formatCooldown, nicheChangeState } from '@/lib/shared/identity'
 import { Button, Chip, Divider, Switch, Tap, Txt } from '@/components/UI'
 
@@ -82,6 +83,7 @@ export default function Settings() {
   const [blocked, setBlocked] = useState(false)
   const [notInterested, setNotInterested] = useState(false)
   const [focusOpen, setFocusOpen] = useState(false)
+  const [demoOpen, setDemoOpen] = useState(false)
 
   return (
     <View style={{ flex: 1, backgroundColor: c.canvas, paddingTop: insets.top }}>
@@ -198,6 +200,8 @@ export default function Settings() {
         </Section>
 
         <Section title="About" icon={<ShieldCheck size={15} color={c.muted} />}>
+          <Row label="Demo mode" hint="Every dial that shapes this prototype, in one panel."
+            onPress={() => setDemoOpen(true)} control={<SlidersHorizontal size={16} color={c.faint} />} />
           <Row label="Replay onboarding" onPress={() => dispatch({ type: 'patch', patch: { onboarded: false } })} control={<Vibrate size={16} color={c.faint} />} />
           <Row label="Reset prototype" hint="Clears likes, saves, follows and drafts."
             onPress={() => { dispatch({ type: 'reset' }); toast('Prototype reset') }} control={<LogOut size={16} color={c.faint} />} />
@@ -209,6 +213,7 @@ export default function Settings() {
       </ScrollView>
 
       <FocusSheet open={focusOpen} onClose={() => setFocusOpen(false)} />
+      <DemoMode open={demoOpen} onClose={() => setDemoOpen(false)} />
 
       <Sheet open={blocked} onClose={() => setBlocked(false)} title="Blocked accounts">
         <View style={{ paddingHorizontal: 18, paddingBottom: 24 }}>

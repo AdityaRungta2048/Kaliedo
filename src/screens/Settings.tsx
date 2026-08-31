@@ -13,6 +13,7 @@ import { Button, Pressable, Switch, TopicChip } from '@/components/ui/Primitives
 import { Sheet } from '@/components/ui/Overlay'
 import { FocusSheet } from '@/components/layout/FocusMode'
 import { formatCooldown, nicheChangeState } from '@/lib/identity'
+import { T_BASE } from '@/lib/motion'
 
 function Section({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
   return (
@@ -84,7 +85,7 @@ export function Settings() {
               <button key={v} onClick={() => dispatch({ type: 'patch', patch: { messagePermission: v } })}
                 className={cx('relative rounded-full px-3.5 py-1.5 text-[13px] font-medium capitalize transition-colors',
                   state.messagePermission === v ? 'text-canvas' : 'text-muted hover:text-ink')}>
-                {state.messagePermission === v && <motion.span layoutId="msg-perm" className="absolute inset-0 rounded-full bg-ink" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                {state.messagePermission === v && <motion.span layoutId="msg-perm" className="absolute inset-0 rounded-full bg-ink" transition={T_BASE} />}
                 <span className="relative">{v === 'following' ? 'People I follow' : v}</span>
               </button>
             ))}

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { View } from 'react-native'
-import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming, FadeIn, FadeOut } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming, FadeIn, FadeOut } from 'react-native-reanimated'
 import { Bookmark, Heart, MessageCircle, Repeat2, Share2 } from 'lucide-react-native'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
-import { SPRING_SNAPPY } from '@/theme/tokens'
+import { T_BASE, T_FAST } from '@/theme/tokens'
 import { compact } from '@/lib/shared/utils'
 import type { Post } from '@/lib/shared/types'
 import { Tap, Txt } from './UI'
@@ -48,7 +48,7 @@ export function LikeButton({ post, showCount = true }: { post: Post; showCount?:
         if (!liked) {
           tap('medium')
           setBurst(true); setTimeout(() => setBurst(false), 420)
-          s.value = withSequence(withSpring(1.35, SPRING_SNAPPY), withSpring(1, SPRING_SNAPPY))
+          s.value = withSequence(withTiming(1.35, T_BASE), withTiming(1, T_FAST))
         } else tap('light')
         dispatch({ type: 'toggleLike', id: post.id })
       }}
@@ -81,7 +81,7 @@ export function SaveButton({ post, withLabel }: { post: Post; withLabel?: boolea
     <Tap
       haptic="medium"
       onPress={() => {
-        y.value = withSequence(withTiming(-5, { duration: 110 }), withSpring(0, SPRING_SNAPPY))
+        y.value = withSequence(withTiming(-5, { duration: 110 }), withTiming(0, T_BASE))
         dispatch({ type: 'toggleSave', id: post.id })
         toast(saved ? 'Removed from saved' : 'Saved to your shelf', 'bookmark')
       }}
@@ -105,7 +105,7 @@ export function RepostButton({ post }: { post: Post }) {
   return (
     <Tap
       haptic="medium"
-      onPress={() => { r.value = withSpring(done ? 0 : 360, { damping: 18, stiffness: 200 }); setDone(!done); toast(done ? 'Repost removed' : 'Reposted to your followers') }}
+      onPress={() => { r.value = withTiming(done ? 0 : 360, T_BASE); setDone(!done); toast(done ? 'Repost removed' : 'Reposted to your followers') }}
       accessibilityLabel="Repost"
       style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 6, paddingHorizontal: 4 }}
     >

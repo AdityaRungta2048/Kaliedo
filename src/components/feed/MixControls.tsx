@@ -5,6 +5,7 @@ import { rebalanceMix } from '@/lib/recommend'
 import { useApp } from '@/store/AppContext'
 import { Slider } from '@/components/ui/Primitives'
 import { cx } from '@/lib/utils'
+import { T_BASE } from '@/lib/motion'
 
 const ROWS: { key: keyof Mix; label: string; note: string; tint: 'ember' | 'moss' | 'iris'; bar: string }[] = [
   { key: 'familiar', label: 'Familiar', note: 'What you already read', tint: 'ember', bar: 'bg-ember' },
@@ -20,7 +21,7 @@ export function MixBar({ mix, height = 8 }: { mix: Mix; height?: number }) {
         <motion.div
           key={r.key} className={cx(r.bar, 'h-full')}
           animate={{ width: `${mix[r.key]}%` }}
-          transition={{ type: 'spring', stiffness: 300, damping: 32 }}
+          transition={T_BASE}
         />
       ))}
     </div>

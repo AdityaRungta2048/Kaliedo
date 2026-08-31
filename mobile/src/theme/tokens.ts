@@ -1,3 +1,5 @@
+import { Easing } from 'react-native-reanimated'
+
 /**
  * The same palette as the web app, expressed as plain values. Both themes are
  * designed, not inverted — dark is warm charcoal with warmed type, never black.
@@ -73,6 +75,16 @@ export const FONT = {
 
 export const TIMING = { fast: 160, base: 260, slow: 420 } as const
 
-/** One spring for everything that moves, so the app feels like one object. */
-export const SPRING = { damping: 26, stiffness: 260, mass: 0.9 } as const
-export const SPRING_SNAPPY = { damping: 30, stiffness: 460, mass: 0.7 } as const
+/**
+ * One motion vocabulary, and it is all timing rather than springs. A spring that
+ * is not critically damped overshoots, and that overshoot reads as a wobble when
+ * a column of cards or a tab indicator settles.
+ */
+export const CURVE = Easing.bezier(0.22, 1, 0.36, 1)
+
+/** Press feedback: barely registered. */
+export const T_FAST = { duration: 130, easing: CURVE } as const
+/** Tabs, toggles, toasts — the default. */
+export const T_BASE = { duration: 260, easing: CURVE } as const
+/** Sheets, the reader morph, anything crossing distance. */
+export const T_SLOW = { duration: 340, easing: CURVE } as const

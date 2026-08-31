@@ -9,6 +9,7 @@ import { cx, timeAgo } from '@/lib/utils'
 import { CoverArt } from '@/components/brand/CoverArt'
 import { Avatar, EmptyState, Pressable, VerifiedMark } from '@/components/ui/Primitives'
 import { Sheet } from '@/components/ui/Overlay'
+import { T_BASE } from '@/lib/motion'
 
 const EMOJI = ['❤️', '🔥', '😄', '👏', '🤔', '💯']
 
@@ -118,7 +119,7 @@ export function Messages() {
           {active && (
             <motion.div
               key={active.id} initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 340, damping: 34 }}
+              transition={T_BASE}
               className="fixed inset-0 z-40 bg-canvas"
             >
               <Conversation id={active.id} onBack={() => setActiveId(null)} />
@@ -216,7 +217,7 @@ function Conversation({ id, onBack }: { id: string; onBack: () => void }) {
               <motion.div
                 key={m.id} layout
                 initial={{ opacity: 0, y: 12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                transition={T_BASE}
                 className={cx('flex', mine ? 'justify-end' : 'justify-start')}
               >
                 <div className={cx('group relative max-w-[78%] sm:max-w-[62%]')}>

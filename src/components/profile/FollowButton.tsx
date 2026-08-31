@@ -4,6 +4,7 @@ import { useApp } from '@/store/AppContext'
 import { userById } from '@/lib/users'
 import { cx } from '@/lib/utils'
 import { Pressable } from '@/components/ui/Primitives'
+import { T_BASE } from '@/lib/motion'
 
 /** Follow → Following is a transition, not a text swap. */
 export function FollowButton({ userId, size = 'md', full = false }: { userId: string; size?: 'sm' | 'md'; full?: boolean }) {
@@ -32,7 +33,7 @@ export function FollowButton({ userId, size = 'md', full = false }: { userId: st
           initial={{ y: following ? 14 : -14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: following ? -14 : 14, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+          transition={T_BASE}
           className="flex items-center gap-1.5"
         >
           {following ? <Check size={13} strokeWidth={3} /> : <Plus size={13} strokeWidth={3} />}

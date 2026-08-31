@@ -15,6 +15,7 @@ import { MixBar, MixControls } from '@/components/feed/MixControls'
 import { Sheet } from '@/components/ui/Overlay'
 import { Avatar, Button, EmptyState, Pressable, SectionHeading, TopicChip, VerifiedMark } from '@/components/ui/Primitives'
 import { FollowButton } from '@/components/profile/FollowButton'
+import { T_BASE } from '@/lib/motion'
 
 export function Home() {
   const { state, dispatch, reducedMotion, toast } = useApp()
@@ -113,7 +114,7 @@ export function Home() {
                   >
                     {active && (
                       <motion.span layoutId="explore-scope" className="absolute inset-0 rounded-full bg-ink"
-                        transition={{ type: 'spring', stiffness: 420, damping: 34 }} />
+                        transition={T_BASE} />
                     )}
                     <span className="relative">{tab.label}</span>
                   </button>

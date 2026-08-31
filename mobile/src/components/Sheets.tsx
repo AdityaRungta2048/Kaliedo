@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, TextInpu
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
-  FadeIn, FadeInDown, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming,
+  FadeIn, FadeInDown, runOnJS, useAnimatedStyle, useSharedValue, withTiming,
 } from 'react-native-reanimated'
 import { Link2, Repeat2, Send, Share2, X } from 'lucide-react-native'
 import * as Clipboard from 'expo-clipboard'
@@ -12,7 +12,7 @@ import { userById } from '@/lib/shared/users'
 import { compact, timeAgo } from '@/lib/shared/utils'
 import { useApp } from '@/store/AppContext'
 import { useTheme } from '@/theme/ThemeProvider'
-import { RADIUS } from '@/theme/tokens'
+import { CURVE, RADIUS, T_BASE } from '@/theme/tokens'
 import { Avatar, Divider, Tap, Txt } from './UI'
 
 /** One bottom sheet for the whole app: drag handle, scrim, spring, drag-to-dismiss. */
@@ -34,7 +34,7 @@ export function Sheet({
     .onEnd((e) => {
       if (e.translationY > 100 || e.velocityY > 800) {
         y.value = withTiming(600, { duration: 200 }, (d) => { if (d) runOnJS(onClose)() })
-      } else y.value = withSpring(0, { damping: 22, stiffness: 280 })
+      } else y.value = withTiming(0, T_BASE)
     })
 
   const sheet = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }))
@@ -54,7 +54,7 @@ export function Sheet({
         pointerEvents="box-none"
       >
         <Animated.View
-          entering={FadeInDown.duration(300).springify().damping(22)}
+          entering={FadeInDown.duration(300).easing(CURVE)}
           style={[{
             backgroundColor: c.surface,
             borderTopLeftRadius: RADIUS.xl, borderTopRightRadius: RADIUS.xl,
