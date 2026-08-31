@@ -85,22 +85,25 @@ you're going to build the APK anyway.
 
 ---
 
-## Put the web app online
+## The web app deploys itself
 
-Also from your machine, no GitHub involved:
+The repository is connected to Vercel, so **every push to `main` builds and goes live
+automatically**. There is nothing to run. Watch a deploy at
+[vercel.com/dashboard](https://vercel.com/dashboard); it takes about a minute.
+
+Vercel builds with the settings it detected — framework **Vite**, build `npm run build`,
+output `dist` — and `vercel.json` routes every path to `index.html` so the client-side
+router handles deep links and refreshes.
+
+### Deploying by hand instead
+
+Only needed if you want to ship something that is not committed, or to roll back:
 
 ```bash
 npm install -g vercel
 vercel login
 vercel --prod
 ```
-
-Answer the setup prompts once (accept the detected **Vite** settings — build `npm run build`,
-output `dist`). `vercel.json` already routes every path to `index.html` for the router.
-After that, `vercel --prod` redeploys any time you want.
-
-If you'd rather it deploy by itself on each push, import the repo at
-[vercel.com/new](https://vercel.com/new) instead — that needs no tokens either.
 
 ---
 

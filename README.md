@@ -42,9 +42,11 @@ Requires Node 18+.
 
 ## Deploying
 
-See **[DEPLOY.md](./DEPLOY.md)** — how to get the web app on Vercel and a real `.apk` onto
-an Android phone. Both run from your own machine: Expo builds the app in its cloud, and
-Vercel deploys the site, with no CI in between.
+The web app is connected to Vercel and deploys on every push to `main` — nothing to run.
+The Android app ships from your machine through EAS: `eas build` once for an installable
+`.apk`, then `eas update` for everything after that.
+
+See **[DEPLOY.md](./DEPLOY.md)** for both.
 
 ---
 
